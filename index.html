@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="nocturne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nocturne · 夜曲</title>
+<meta name="description" content="一处以音乐为名的角色扮演伴侣。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/base.css">
+</head>
+<body>
+
+<div data-include="assets/partials/header.html" data-base=""></div>
+
+<main class="page">
+
+  <section class="hero">
+    <div class="hero-clef" aria-hidden="true">
+      <svg viewBox="0 0 100 240" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 20 Q35 40 45 70 Q60 90 50 120 Q40 145 55 165 Q75 185 60 210 Q45 225 35 215" 
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="45" cy="205" r="8" fill="currentColor"/>
+      </svg>
+    </div>
+    <p class="hero-eyebrow">— A Roleplay Companion —</p>
+    <h1 class="hero-title">Nocturne</h1>
+    <p class="hero-subtitle">在暗夜与琴音之间，为你的角色寻一处栖身。</p>
+    <div class="hero-divider"><span>♪</span></div>
+    <p id="apiStatus" class="hero-status">读取配置中…</p>
+  </section>
+
+  <section class="modules">
+    <a class="module-card glass" href="modules/quiz/">
+      <div class="module-note">♪</div>
+      <h3 class="module-title">趣味测试</h3>
+      <p class="module-desc">音符测试。以数题探你之偏好，觅最相宜之角色。</p>
+      <span class="module-tag">无需 API</span>
+    </a>
+
+    <div class="module-card glass is-locked" aria-disabled="true">
+      <div class="module-note">♫</div>
+      <h3 class="module-title">人设生产</h3>
+      <p class="module-desc">上传你与他的原设，由 AI 依恨海情天诸调，谱出专属人设。</p>
+      <span class="module-tag">敬请期待</span>
+    </div>
+
+    <div class="module-card glass is-locked" aria-disabled="true">
+      <div class="module-note">♬</div>
+      <h3 class="module-title">相性卡</h3>
+      <p class="module-desc">解你与角色之相性，附一纸诗签，与 paro、au 之荐。</p>
+      <span class="module-tag">敬请期待</span>
+    </div>
+
+    <div class="module-card glass is-locked" aria-disabled="true">
+      <div class="module-note">♭</div>
+      <h3 class="module-title">相亲角</h3>
+      <p class="module-desc">灯下嘉宾登场。你许何种恋，便有何种人为你而来。</p>
+      <span class="module-tag">敬请期待</span>
+    </div>
+
+    <div class="module-card glass is-locked" aria-disabled="true">
+      <div class="module-note">♩</div>
+      <h3 class="module-title">Repo 卡</h3>
+      <p class="module-desc">为一段体验留一枚卡片。作者、感受、诗意，皆可裱框。</p>
+      <span class="module-tag">敬请期待</span>
+    </div>
+  </section>
+
+</main>
+
+<div data-include="assets/partials/footer.html" data-base=""></div>
+
+<script src="assets/include.js"></script>
+<script type="module">
+  import { getConfig } from './assets/config.js';
+  document.addEventListener('partials:ready', () => {
+    const cfg = getConfig();
+    const el = document.getElementById('apiStatus');
+    if (cfg.baseUrl && cfg.apiKey && cfg.model) {
+      el.innerHTML = `● 已连结 · <span class="mono">${cfg.model}</span>`;
+      el.classList.add('is-ok');
+    } else {
+      el.innerHTML = '○ 尚未配置 API · <a href="settings.html">前往设置</a>';
+    }
+  });
+</script>
+
+</body>
+</html>
