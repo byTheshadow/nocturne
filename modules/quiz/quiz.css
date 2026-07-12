@@ -1,0 +1,61 @@
+
+.quiz-tagline {
+  font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 17px;
+  margin: 16px auto 0;
+  max-width: 520px;
+}
+
+.quiz-banks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 22px;
+  margin: 32px 0;
+}
+
+.quiz-bank {
+  padding: 36px 30px 30px;
+  border-radius: 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-height: 260px;
+}
+
+.quiz-bank-note {
+  font-family: 'Cinzel', serif;
+  font-size: 40px;
+  color: var(--accent);
+  text-shadow: 0 0 24px var(--accent-glow);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.quiz-bank-title {
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  font-weight: 500;
+  font-size: 20px;
+  letter-spacing: .22em;
+  margin: 0 0 6px;
+}
+
+.quiz-bank-desc {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 auto;
+  padding-bottom: 20px;
+  font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+}
+
+.quiz-footnote {
+  text-align: center;
+  margin-top: 40px;
+  color: var(--text-faint);
+  font-style: italic;
+  font-size: 14px;
+}
