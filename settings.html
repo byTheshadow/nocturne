@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="nocturne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设置 · Nocturne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/base.css">
+</head>
+<body>
+
+<div data-include="assets/partials/header.html" data-base=""></div>
+
+<main class="page page-narrow">
+
+  <header class="section-head">
+    <p class="section-eyebrow">Settings</p>
+    <h1 class="section-title">设置</h1>
+    <div class="hero-divider small"><span>♪</span></div>
+  </header>
+
+  <section class="panel glass">
+    <h2 class="panel-title">API 配置</h2>
+    <p class="panel-hint">凡需 AI 之模块，皆读取此处。数据仅存于本地浏览器。</p>
+
+    <label class="field">
+      <span class="field-label">Base URL</span>
+      <input type="text" id="baseUrl" class="input" placeholder="https://api.openai.com/v1" autocomplete="off" spellcheck="false">
+      <span class="field-hint">兼容 OpenAI 协议之端点，需以 <code>/v1</code> 或等价路径结尾。</span>
+    </label>
+
+    <label class="field">
+      <span class="field-label">API Key</span>
+      <div class="input-with-btn">
+        <input type="password" id="apiKey" class="input" placeholder="sk-..." autocomplete="off" spellcheck="false">
+        <button type="button" class="btn-ghost" id="toggleKey" title="显示/隐藏">◐</button>
+      </div>
+    </label>
+
+    <div class="field">
+      <div class="field-row">
+        <span class="field-label">模型</span>
+        <button type="button" class="btn-subtle" id="fetchModels">
+          <span class="btn-icon">↻</span> 拉取模型列表
+        </button>
+      </div>
+      <select id="modelSelect" class="input" disabled>
+        <option value="">请先拉取模型</option>
+      </select>
+      <div id="modelFallback" class="field-fallback" hidden>
+        <span class="field-hint">若拉取失败，可手动输入模型名：</span>
+        <input type="text" id="modelManual" class="input" placeholder="gpt-4o-mini" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="panel-actions">
+      <button type="button" class="btn-primary" id="saveConfig">保存</button>
+      <button type="button" class="btn-ghost" id="clearConfig">清除配置</button>
+      <span id="saveMsg" class="save-msg" aria-live="polite"></span>
+    </div>
+  </section>
+
+  <section class="panel glass">
+    <h2 class="panel-title">主题</h2>
+    <p class="panel-hint">Nocturne 夜曲 · 暗夜哥特。Aria 咏叹 · 极简白昼。</p>
+    <div class="theme-picker">
+      <button type="button" class="theme-swatch" data-theme-choice="nocturne">
+        <span class="swatch swatch-nocturne"></span>
+        <span class="swatch-label">Nocturne · 夜曲</span>
+      </button>
+      <button type="button" class="theme-swatch" data-theme-choice="aria">
+        <span class="swatch swatch-aria"></span>
+        <span class="swatch-label">Aria · 咏叹</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="panel glass panel-quiet">
+    <h2 class="panel-title">关于</h2>
+    <p class="panel-hint">
+      Nocturne 是一处静态的角色扮演伴侣。数据不出你的浏览器，无历史记录，无服务端。<br>
+      每一模块独立运作，互不干扰。
+    </p>
+  </section>
+
+</main>
+
+<div data-include="assets/partials/footer.html" data-base=""></div>
+
+<script src="assets/include.js"></script>
+<script type="module" src="assets/config.js"></script>
+<script type="module">
+  import { getConfig, setConfig, clearConfig } from './assets/config.js';
+  import { fetchModels } from './assets/ai.js';
+
+  const $ = (s) => document.querySelector(s);
+  const cfg = getConfig();
+  $('#baseUrl').value = cfg.baseUrl || '';
+  $('#apiKey').value = cfg.apiKey || '';
+
+  const modelSelect = $('#modelSelect');
+  const modelManual = $('#modelManual');
+  const modelFallback = $('#modelFallback');
+
+  if (cfg.model) {
+    const opt = document.createElement('option');
+    opt.value = cfg.model;
+    opt.textContent = cfg.model;
+    opt.selected = true;
+    modelSelect.appendChild(opt);
+    modelSelect.disabled = false;
+  }
+
+  $('#toggleKey').addEventListener('click', () => {
+    const k = $('#apiKey');
+    k.type = k.type === 'password' ? 'text' : 'password';
+  });
+
+  $('#fetchModels').addEventListener('click', async () => {
+    const btn = $('#fetchModels');
+    const baseUrl = $('#baseUrl').value.trim();
+    const apiKey = $('#apiKey').value.trim();
+    if (!baseUrl || !apiKey) {
+      showMsg('请先填写 Base URL 与 API Key', 'err');
+      return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon spin">↻</span> 拉取中…';
+    try {
+      const models = await fetchModels(baseUrl, apiKey);
+      modelSelect.innerHTML = '';
+      const ph = document.createElement('option');
+      ph.value = '';
+      ph.textContent = `— 共 ${models.length} 个模型 —`;
+      modelSelect.appendChild(ph);
+      models.forEach(id => {
+        const o = document.createElement('option');
+        o.value = id;
+        o.textContent = id;
+        if (id === cfg.model) o.selected = true;
+        modelSelect.appendChild(o);
+      });
+      modelSelect.disabled = false;
+      modelFallback.hidden = true;
+      showMsg(`已拉取 ${models.length} 个模型`, 'ok');
+    } catch (err) {
+      modelFallback.hidden = false;
+      showMsg('拉取失败，可手动输入。' + (err.message || ''), 'err');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="btn-icon">↻</span> 拉取模型列表';
+    }
+  });
+
+  $('#saveConfig').addEventListener('click', () => {
+    const model = modelSelect.value || modelManual.value.trim();
+    if (!$('#baseUrl').value.trim()) return showMsg('Base URL 不能为空', 'err');
+    if (!$('#apiKey').value.trim()) return showMsg('API Key 不能为空', 'err');
+    if (!model) return showMsg('请选择或填写模型名', 'err');
+    setConfig({
+      baseUrl: $('#baseUrl').value.trim(),
+      apiKey: $('#apiKey').value.trim(),
+      model,
+    });
+    showMsg('已保存', 'ok');
+  });
+
+  $('#clearConfig').addEventListener('click', () => {
+    if (!confirm('清除所有 API 配置？')) return;
+    clearConfig();
+    $('#baseUrl').value = '';
+    $('#apiKey').value = '';
+    modelSelect.innerHTML = '<option value="">请先拉取模型</option>';
+    modelSelect.disabled = true;
+    modelManual.value = '';
+    showMsg('已清除', 'ok');
+  });
+
+  function showMsg(text, kind) {
+    const el = $('#saveMsg');
+    el.textContent = text;
+    el.className = 'save-msg ' + (kind === 'ok' ? 'is-ok' : 'is-err');
+    clearTimeout(showMsg._t);
+    showMsg._t = setTimeout(() => { el.textContent = ''; el.className = 'save-msg'; }, 3200);
+  }
+
+  // 主题选择
+  document.querySelectorAll('[data-theme-choice]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = btn.dataset.themeChoice;
+      document.documentElement.dataset.theme = t;
+      localStorage.setItem('nocturne_theme', t);
+      document.querySelectorAll('[data-theme-choice]').forEach(b =>
+        b.classList.toggle('is-active', b === btn));
+    });
+  });
+  const currentTheme = document.documentElement.dataset.theme;
+  document.querySelector(`[data-theme-choice="${currentTheme}"]`)?.classList.add('is-active');
+</script>
+
+</body>
+</html>
