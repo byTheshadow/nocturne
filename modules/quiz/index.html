@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="nocturne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>趣味测试 · Nocturne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/theme.css">
+<link rel="stylesheet" href="../../assets/base.css">
+<link rel="stylesheet" href="quiz.css">
+</head>
+<body>
+
+<div data-include="../../assets/partials/header.html" data-base="../../"></div>
+
+<main class="page">
+
+  <header class="section-head">
+    <p class="section-eyebrow">Divination in Notes</p>
+    <h1 class="section-title">趣味测试</h1>
+    <div class="hero-divider small"><span>♪</span></div>
+    <p class="quiz-tagline">以数题探你之偏好，觅最相宜之角色，或谱你之画像。</p>
+  </header>
+
+  <section class="quiz-banks">
+    <article class="quiz-bank glass">
+      <div class="quiz-bank-note">♪</div>
+      <h2 class="quiz-bank-title">角色偏好</h2>
+      <p class="quiz-bank-desc">凭一系列选择，从卡库中觅一角色付你。</p>
+      <button class="btn-primary" disabled>题库筹备中</button>
+    </article>
+
+    <article class="quiz-bank glass">
+      <div class="quiz-bank-note">♫</div>
+      <h2 class="quiz-bank-title">User 画像</h2>
+      <p class="quiz-bank-desc">测你为何等灵魂，予你一幅自我素描。</p>
+      <button class="btn-primary" disabled>题库筹备中</button>
+    </article>
+  </section>
+
+  <p class="quiz-footnote">
+    此模块无需 API，纯本地运算。题库文件位于 <code>/data/quiz-banks/</code>，日后添置。
+  </p>
+
+</main>
+
+<div data-include="../../assets/partials/footer.html" data-base="../../"></div>
+
+<script src="../../assets/include.js"></script>
+<script type="module" src="quiz.js"></script>
+
+</body>
+</html>
