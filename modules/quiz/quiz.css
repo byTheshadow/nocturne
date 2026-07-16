@@ -816,3 +816,272 @@
   .quiz-nrc { padding: 20px 20px; }
   .quiz-narrative { gap: 14px; }
 }
+/* ============================================================
+   Persona result — 灵魂画像结果页
+   ============================================================ */
+
+.quiz-persona-result {
+  padding-top: 30px;
+}
+
+/* 逐块淡入。用 --stagger 让每张卡自定义节奏。 */
+.quiz-persona-result > * {
+  opacity: 0;
+  animation: quiz-fade-up .8s cubic-bezier(.2, .8, .3, 1) forwards;
+}
+.quiz-persona-result > *:nth-child(1) { animation-delay: .1s; }
+.quiz-persona-result > *:nth-child(2) { animation-delay: 1.0s; }
+.quiz-persona-result > *:nth-child(3) { animation-delay: 1.3s; }
+.quiz-persona-result > *:nth-child(4) { animation-delay: 2.3s; }
+.quiz-persona-result > *:nth-child(5) { animation-delay: 2.6s; }
+
+/* --- Hero --- */
+.quiz-persona-hero {
+  text-align: center;
+  padding: 50px 20px 70px;
+  position: relative;
+}
+.quiz-persona-code {
+  font-family: 'Cinzel', serif;
+  font-weight: 500;
+  font-size: clamp(64px, 11vw, 108px);
+  letter-spacing: .05em;
+  color: var(--text);
+  margin: 18px 0 0;
+  line-height: 1;
+  text-shadow: 0 0 60px var(--accent-glow);
+  display: inline-flex;
+  gap: .01em;
+}
+.quiz-persona-code span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(30px) scale(.85);
+  animation: quiz-code-in .7s cubic-bezier(.2, .8, .3, 1) forwards;
+}
+.quiz-persona-code span:nth-child(1) { animation-delay: .35s; }
+.quiz-persona-code span:nth-child(2) { animation-delay: .45s; }
+.quiz-persona-code span:nth-child(3) { animation-delay: .55s; }
+.quiz-persona-code span:nth-child(4) { animation-delay: .65s; }
+.quiz-persona-code span:nth-child(5) { animation-delay: .75s; }
+.quiz-persona-code span:nth-child(6) { animation-delay: .85s; }
+
+.quiz-persona-type-name {
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  font-weight: 500;
+  font-size: clamp(34px, 5.2vw, 50px);
+  letter-spacing: .16em;
+  color: var(--text);
+  margin: 0 0 14px;
+  opacity: 0;
+  animation: quiz-fade-up .6s ease 1.25s forwards;
+}
+.quiz-persona-type-tagline {
+  font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--text-dim);
+  max-width: 620px;
+  margin: 0 auto 26px;
+  opacity: 0;
+  animation: quiz-fade-up .6s ease 1.4s forwards;
+}
+
+.quiz-persona-formula {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 12px;
+  padding: 12px 22px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  opacity: 0;
+  animation: quiz-fade-up .6s ease 1.6s forwards;
+}
+.quiz-persona-formula-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.quiz-persona-formula-flag {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: .04em;
+}
+.quiz-persona-formula-label {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: .05em;
+}
+.quiz-persona-formula-plus {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+/* --- Novel --- */
+.quiz-persona-novel {
+  text-align: center;
+  margin: 20px auto 40px;
+  padding: 40px 24px;
+  max-width: 720px;
+  border-top: 1px solid var(--border-faint);
+  border-bottom: 1px solid var(--border-faint);
+  position: relative;
+}
+.quiz-persona-novel::before,
+.quiz-persona-novel::after {
+  content: "♪";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg);
+  padding: 0 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 0;
+}
+.quiz-persona-novel::before { top: -10px; }
+.quiz-persona-novel::after  { bottom: -10px; }
+.quiz-persona-novel-title {
+  font-family: 'Noto Serif SC', serif;
+  font-weight: 500;
+  font-size: clamp(26px, 3.8vw, 34px);
+  letter-spacing: .04em;
+  color: var(--text);
+  margin: 8px 0 12px;
+  line-height: 1.4;
+}
+.quiz-persona-novel-sub {
+  font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text-dim);
+  margin: 0;
+  letter-spacing: .02em;
+}
+
+/* --- Preference grid --- */
+.quiz-persona-prefs {
+  margin: 40px 0;
+}
+.quiz-persona-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .quiz-persona-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.quiz-persona-card {
+  padding: 24px 26px 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: quiz-persona-card-in .7s cubic-bezier(.2, .8, .3, 1) forwards;
+  animation-delay: var(--stagger, 0s);
+  transition: border-color .3s, transform .3s;
+}
+.quiz-persona-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent), transparent 80%);
+  opacity: .5;
+  transition: opacity .3s;
+}
+.quiz-persona-card::after {
+  content: "";
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at center, var(--accent-soft), transparent 70%);
+  opacity: 0;
+  transition: opacity .4s;
+  pointer-events: none;
+}
+.quiz-persona-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+.quiz-persona-card:hover::before { opacity: 1; }
+.quiz-persona-card:hover::after  { opacity: .7; }
+
+@keyframes quiz-persona-card-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.quiz-persona-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.quiz-persona-card-idx {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .2em;
+  color: var(--text-faint);
+}
+.quiz-persona-card-mark {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1;
+  text-shadow: 0 0 12px var(--accent-glow);
+}
+.quiz-persona-card-label {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  letter-spacing: .3em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+.quiz-persona-card-value {
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: .06em;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.quiz-persona-card-desc {
+  font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-dim);
+  margin: 0;
+  letter-spacing: .01em;
+}
+
+/* --- Persona 版 responsive 补丁 --- */
+@media (max-width: 640px) {
+  .quiz-persona-hero { padding: 30px 12px 50px; }
+  .quiz-persona-code { font-size: 60px; }
+  .quiz-persona-type-name { font-size: 28px; letter-spacing: .12em; }
+  .quiz-persona-type-tagline { font-size: 16px; }
+  .quiz-persona-novel { padding: 30px 18px; }
+  .quiz-persona-novel-title { font-size: 22px; }
+  .quiz-persona-card { padding: 20px 20px 18px; }
+  .quiz-persona-card-value { font-size: 19px; }
+}

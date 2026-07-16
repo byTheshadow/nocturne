@@ -65,7 +65,7 @@
     </div>
   </section>
 
-  <!-- ============ 结果页 ============ -->
+  <!-- ============ 结果页 · THME ============ -->
   <section class="quiz-stage quiz-result" data-stage="result" hidden>
 
     <div class="quiz-reveal" data-slot="reveal">
@@ -125,6 +125,43 @@
       <button class="btn-primary" data-action="poster">保存海报</button>
       <button class="btn-ghost" data-action="copy-link">复制链接</button>
       <button class="btn-ghost" data-action="retry">重新测试</button>
+      <a class="btn-ghost" href="index.html">换个测试</a>
+    </div>
+
+  </section>
+
+  <!-- ============ 结果页 · Persona ============ -->
+  <section class="quiz-stage quiz-persona-result" data-stage="result-persona" hidden>
+
+    <div class="quiz-persona-hero">
+      <p class="section-eyebrow">Your AI-RP Persona</p>
+      <div class="quiz-persona-code" data-slot="p-code"></div>
+      <div class="quiz-code-line"></div>
+      <h1 class="quiz-persona-type-name" data-slot="p-type-name"></h1>
+      <p class="quiz-persona-type-tagline" data-slot="p-type-tagline"></p>
+      <div class="quiz-persona-formula" data-slot="p-formula"></div>
+    </div>
+
+    <div class="quiz-persona-novel" data-slot="p-novel-block">
+      <p class="quiz-block-label">你在 RP 中的小说剧名</p>
+      <h2 class="quiz-persona-novel-title" data-slot="p-novel-title"></h2>
+      <p class="quiz-persona-novel-sub" data-slot="p-novel-sub"></p>
+    </div>
+
+    <div class="quiz-persona-prefs">
+      <p class="quiz-block-label">你的交互偏好</p>
+      <div class="quiz-persona-grid" data-slot="p-grid"></div>
+    </div>
+
+    <div class="quiz-scores">
+      <p class="quiz-block-label">七维偏好频率</p>
+      <div class="quiz-score-bars" data-slot="p-scores"></div>
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn-primary" data-action="poster-persona">保存海报</button>
+      <button class="btn-ghost" data-action="copy-link-persona">复制链接</button>
+      <button class="btn-ghost" data-action="retry-persona">重新测试</button>
       <a class="btn-ghost" href="index.html">换个测试</a>
     </div>
 

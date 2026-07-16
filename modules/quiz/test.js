@@ -1,14 +1,17 @@
 /**
  * 测试执行页主控。
- * 三段式：intro → question → result
+ * 支持多套 matcher：thme-matcher / persona-matcher，根据 bank.matcher 分派。
  * URL 参数：
- *   ?bank=role-test         必需，题库 id
- *   ?r=TH-H&s=8-7-3-5       可选，直接跳转到结果（用于分享链接）
+ *   ?bank=role-test           必需，题库 id
+ *   ?r=TH-H&s=8-7-3-5         可选（THME），直接跳到结果
+ *   ?bank=persona-test
+ *   ?r=C1A2G1&s=6-4-8-3-5-7-2 可选（persona），直接跳到结果
  */
 
 import { loadBank, loadResults, loadCharacters, QuizEngine } from './engine.js';
 import { computeCode, findResult, rankCharacters } from './thme-matcher.js';
-import { openPoster } from './share.js';
+import { computePersonaCode, buildPersonaResult, formatFormula } from './persona-matcher.js';
+import { openPoster, openPersonaPoster } from './share.js';
 
 // ---------- Utilities ----------
 const $  = (sel, root = document) => root.querySelector(sel);
@@ -34,6 +37,10 @@ let results = null;
 let characters = null;
 let engine = null;
 
+function isPersonaMode() {
+  return bank?.matcher === 'persona-matcher';
+}
+
 // ---------- Bootstrap ----------
 async function bootstrap() {
   const bankId = params.get('bank');
@@ -51,10 +58,10 @@ async function bootstrap() {
     return;
   }
 
-  // 并行加载可选资源
+  // 并行加载可选资源。persona 模式下不加载角色卡。
   const [rRes, cRes] = await Promise.allSettled([
     bank.resultsRef ? loadResults(bank.resultsRef) : Promise.resolve(null),
-    loadCharacters().catch(() => []),
+    isPersonaMode() ? Promise.resolve([]) : loadCharacters().catch(() => []),
   ]);
   results    = rRes.status === 'fulfilled' ? rRes.value : null;
   characters = cRes.status === 'fulfilled' ? cRes.value : [];
@@ -62,12 +69,19 @@ async function bootstrap() {
   // 分享链接直达
   const sharedCode = params.get('r');
   const sharedScores = params.get('s');
-  if (sharedCode && sharedScores && results) {
+  if (sharedCode && sharedScores) {
     const parts = sharedScores.split('-').map(Number);
     const dims = Object.keys(bank.dimensions);
     if (parts.length === dims.length && parts.every(n => Number.isFinite(n))) {
       const scores = Object.fromEntries(dims.map((d, i) => [d, parts[i]]));
-      renderResult({ code: sharedCode }, scores);
+      if (isPersonaMode()) {
+        renderPersonaResult(scores);
+      } else if (results) {
+        renderResult({ code: sharedCode }, scores);
+      } else {
+        // 结果库没加载出来，只能显示 code
+        renderResult({ code: sharedCode }, scores);
+      }
       return;
     }
   }
@@ -135,7 +149,6 @@ function renderQuestion() {
     box.appendChild(btn);
   });
 
-  // 触发进入动画（重置节点使 CSS 动画重播）
   const body = $('.quiz-question-body');
   body.style.animation = 'none';
   // eslint-disable-next-line no-unused-expressions
@@ -147,13 +160,9 @@ function renderQuestion() {
 
 function handleSelect(optionIndex) {
   engine.select(optionIndex);
-
-  // 视觉反馈
   $$('.quiz-option').forEach((el, i) => {
     el.classList.toggle('is-selected', i === optionIndex);
   });
-
-  // 稍作停顿后前进
   setTimeout(() => {
     const moved = engine.goNext();
     if (moved) {
@@ -161,27 +170,32 @@ function handleSelect(optionIndex) {
     } else {
       finish();
     }
-    // 结束题目时把进度条推满
     const pct = engine.answered / engine.total * 100;
     slot('progress-fill').style.width = `${pct}%`;
   }, 320);
 }
 
 $('[data-action="prev"]').addEventListener('click', () => {
-  if (engine.goPrev()) renderQuestion();
+  if (engine && engine.goPrev()) renderQuestion();
 });
 
 // ---------- Finish → Result ----------
 function finish() {
   const scores = engine.getNormalizedScores();
-  const codeInfo = computeCode(scores);
-  renderResult(codeInfo, scores);
+  if (isPersonaMode()) {
+    renderPersonaResult(scores);
+  } else {
+    const codeInfo = computeCode(scores);
+    renderResult(codeInfo, scores);
+  }
 }
 
+// ==========================================================
+//  THME · 结果渲染（保留原逻辑不动）
+// ==========================================================
 function renderResult(codeInfo, scores) {
   const dims = bank ? Object.keys(bank.dimensions) : ['T', 'H', 'M', 'E'];
 
-  // 更新 URL，方便分享
   try {
     const shareParams = new URLSearchParams(location.search);
     shareParams.set('r', codeInfo.code);
@@ -191,7 +205,6 @@ function renderResult(codeInfo, scores) {
 
   const result = results ? findResult(results, codeInfo.code) : null;
 
-  // Code 拆字符入场
   const codeEl = slot('r-code');
   codeEl.innerHTML = '';
   [...codeInfo.code].forEach(ch => {
@@ -204,30 +217,25 @@ function renderResult(codeInfo, scores) {
     slot('r-name').textContent = result.name || '';
     slot('r-subtitle').textContent = result.subtitle || '';
 
-    // Song
     const songTitle = result.song?.title || '';
     const songGenre = result.song?.genre || '';
     slot('song-title').textContent = songTitle;
     slot('song-genre').textContent = songGenre;
     slot('song').hidden = !songTitle;
 
-    // Narrative fields
     setText('coreImage',   result.coreImage);
     setText('loveMode',    result.loveMode);
     setText('idealPartner',result.idealPartner);
     setText('weakness',    result.weakness);
 
-    // Monologue
     const mono = result.monologue || '';
     slot('monologue').textContent = mono;
     slot('monologue-block').hidden = !mono;
 
-    // Note
     const note = result.note || '';
     slot('note').textContent = note;
     slot('note-block').hidden = !note;
 
-    // Characters
     renderCharacters(result);
 
   } else {
@@ -242,15 +250,11 @@ function renderResult(codeInfo, scores) {
     });
   }
 
-  // Scores
-  renderScoreBars(scores, dims);
-
-  // Bind actions
+  renderScoreBars(scores, dims, 'scores');
   bindResultActions(codeInfo, scores, result);
 
   showStage('result');
 
-  // 触发分数条填充
   requestAnimationFrame(() => {
     setTimeout(() => {
       $$('.quiz-score-fill').forEach(el => el.classList.add('is-filled'));
@@ -267,8 +271,9 @@ function setText(field, text) {
   p.textContent = text;
 }
 
-function renderScoreBars(scores, dims) {
-  const box = slot('scores');
+function renderScoreBars(scores, dims, slotName) {
+  const box = slot(slotName);
+  if (!box) return;
   box.innerHTML = '';
   const dimMeta = bank?.dimensions || {};
   dims.forEach(d => {
@@ -327,7 +332,6 @@ function renderCharacters(result) {
   });
 }
 
-// ---------- Result actions ----------
 function bindResultActions(codeInfo, scores, result) {
   const btnPoster = $('[data-action="poster"]');
   const btnCopy   = $('[data-action="copy-link"]');
@@ -359,13 +363,150 @@ function bindResultActions(codeInfo, scores, result) {
   };
 
   btnRetry.onclick = () => {
-    // 清掉 URL 的 r/s 再重启
     history.replaceState(null, '', `?bank=${params.get('bank')}`);
     engine = new QuizEngine(bank);
     renderIntro();
   };
 }
 
+// ==========================================================
+//  Persona · 结果渲染
+// ==========================================================
+const PREF_META = [
+  { idx: '01', mark: '♪', key: 'sweetness',    label: '甜度阈值' },
+  { idx: '02', mark: '♫', key: 'idealPersona', label: '理想 AI 人设' },
+  { idx: '03', mark: '♩', key: 'replyStyle',   label: '你的回复画风' },
+  { idx: '04', mark: '♭', key: 'intimacy',     label: '亲密尺度' },
+  { idx: '05', mark: '♯', key: 'drama',        label: '最吃的剧情' },
+  { idx: '06', mark: '♬', key: 'guidance',     label: '剧情主导权' },
+];
+
+function renderPersonaResult(scores) {
+  const dims = Object.keys(bank.dimensions);
+  const codeInfo = computePersonaCode(scores);
+
+  // 更新 URL
+  try {
+    const shareParams = new URLSearchParams(location.search);
+    shareParams.set('r', codeInfo.code);
+    shareParams.set('s', dims.map(d => scores[d] ?? 0).join('-'));
+    history.replaceState(null, '', `?${shareParams.toString()}`);
+  } catch { /* no-op */ }
+
+  const picked = buildPersonaResult(codeInfo, scores, results || {});
+
+  // --- Hero ---
+  const codeEl = slot('p-code');
+  codeEl.innerHTML = '';
+  [...codeInfo.code].forEach(ch => {
+    const s = document.createElement('span');
+    s.textContent = ch;
+    codeEl.appendChild(s);
+  });
+
+  slot('p-type-name').textContent = picked.typeLabel?.name || codeInfo.code;
+  slot('p-type-tagline').textContent = picked.typeLabel?.tagline || '';
+
+  const formulaParts = formatFormula(picked.flags, bank.dimensions);
+  slot('p-formula').innerHTML = formulaParts
+    .map(({ flag, label }) =>
+      `<span class="quiz-persona-formula-item">
+        <span class="quiz-persona-formula-flag">${escapeHtml(flag)}</span>
+        <span class="quiz-persona-formula-label">${escapeHtml(label)}</span>
+      </span>`
+    )
+    .join('<span class="quiz-persona-formula-plus">+</span>');
+
+  // --- Novel ---
+  const novelBlock = slot('p-novel-block');
+  if (picked.novel?.title) {
+    slot('p-novel-title').textContent = picked.novel.title;
+    slot('p-novel-sub').textContent = picked.novel.subtitle || '';
+    novelBlock.hidden = false;
+  } else {
+    novelBlock.hidden = true;
+  }
+
+  // --- Preference grid ---
+  const grid = slot('p-grid');
+  grid.innerHTML = '';
+  PREF_META.forEach((meta, i) => {
+    const item = picked[meta.key];
+    const card = document.createElement('article');
+    card.className = 'quiz-persona-card';
+    card.style.setProperty('--stagger', `${0.1 + i * 0.12}s`);
+    card.innerHTML = `
+      <div class="quiz-persona-card-head">
+        <span class="quiz-persona-card-idx">${meta.idx}</span>
+        <span class="quiz-persona-card-mark">${meta.mark}</span>
+        <span class="quiz-persona-card-label">${escapeHtml(meta.label)}</span>
+      </div>
+      <div class="quiz-persona-card-value">${escapeHtml(item?.label || item?.name || '—')}</div>
+      <p class="quiz-persona-card-desc">${escapeHtml(item?.desc || '')}</p>
+    `;
+    grid.appendChild(card);
+  });
+
+  // --- Scores ---
+  renderScoreBars(scores, dims, 'p-scores');
+
+  bindPersonaActions(picked, scores);
+
+  showStage('result-persona');
+
+  // 触发分数条填充 + 卡片顺序淡入
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      $$('#stage-result-persona .quiz-score-fill, .quiz-persona-result .quiz-score-fill')
+        .forEach(el => el.classList.add('is-filled'));
+    }, 1200);
+  });
+}
+
+function bindPersonaActions(picked, scores) {
+  const btnPoster = $('[data-action="poster-persona"]');
+  const btnCopy   = $('[data-action="copy-link-persona"]');
+  const btnRetry  = $('[data-action="retry-persona"]');
+
+  if (btnPoster) {
+    btnPoster.onclick = () => {
+      openPersonaPoster({
+        code: picked.code,
+        typeLabel: picked.typeLabel,
+        novel: picked.novel,
+        formula: formatFormula(picked.flags, bank.dimensions),
+        prefs: PREF_META.map(m => ({
+          idx: m.idx, mark: m.mark, label: m.label,
+          value: picked[m.key]?.label || picked[m.key]?.name || '',
+        })),
+        scores,
+        dimensions: bank?.dimensions || {},
+        theme: document.documentElement.dataset.theme || 'nocturne',
+        brand: 'NOCTURNE',
+        url: location.href,
+      });
+    };
+  }
+
+  if (btnCopy) {
+    btnCopy.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        flashButton(btnCopy, '已复制');
+      } catch { flashButton(btnCopy, '复制失败'); }
+    };
+  }
+
+  if (btnRetry) {
+    btnRetry.onclick = () => {
+      history.replaceState(null, '', `?bank=${params.get('bank')}`);
+      engine = new QuizEngine(bank);
+      renderIntro();
+    };
+  }
+}
+
+// ---------- Helpers ----------
 function flashButton(btn, msg) {
   const original = btn.textContent;
   btn.textContent = msg;
@@ -376,13 +517,11 @@ function flashButton(btn, msg) {
   }, 1400);
 }
 
-// ---------- Global actions ----------
 function bindGlobalActions() {
   const reloadBtn = $('[data-action="reload"]');
   if (reloadBtn) reloadBtn.onclick = () => location.reload();
 }
 
-// ---------- Helpers ----------
 function escapeHtml(str) {
   return String(str ?? '')
     .replace(/&/g, '&amp;')
@@ -399,9 +538,7 @@ function boot() {
   __started = true;
   bootstrap();
 }
-// partials 加载完就启动（用于顶栏依赖）
 document.addEventListener('partials:ready', boot, { once: true });
-// 兜底：DOM 已 ready 就直接启动，不必等 partials（测试逻辑本身与顶栏无关）
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot, { once: true });
 } else {
