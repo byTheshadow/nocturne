@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="nocturne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>测试进行中 · Nocturne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/theme.css">
+<link rel="stylesheet" href="../../assets/base.css">
+<link rel="stylesheet" href="quiz.css">
+</head>
+<body>
+
+<div data-include="../../assets/partials/header.html" data-base="../../"></div>
+
+<main class="page quiz-test-page">
+
+  <!-- ============ 加载中 ============ -->
+  <section class="quiz-stage quiz-loading" data-stage="loading">
+    <div class="quiz-loader"><span></span><span></span><span></span></div>
+    <p class="quiz-loader-text">题库准备中……</p>
+  </section>
+
+  <!-- ============ 起始页 ============ -->
+  <section class="quiz-stage quiz-intro" data-stage="intro" hidden>
+    <p class="section-eyebrow" data-slot="bank-eyebrow">Divination in Notes</p>
+    <h1 class="quiz-intro-title" data-slot="bank-name">题库</h1>
+    <div class="hero-divider small"><span>♪</span></div>
+    <p class="quiz-intro-subtitle" data-slot="bank-subtitle"></p>
+
+    <div class="quiz-intro-dims" data-slot="dims"></div>
+
+    <div class="quiz-intro-actions">
+      <button class="btn-primary" data-action="start">开始测试</button>
+      <a class="btn-ghost" href="index.html">返回题库</a>
+    </div>
+
+    <p class="quiz-intro-hint">测试全部在本地计算，不发送任何请求。刷新页面即清除进度。</p>
+  </section>
+
+  <!-- ============ 答题页 ============ -->
+  <section class="quiz-stage quiz-question" data-stage="question" hidden>
+    <div class="quiz-progress">
+      <div class="quiz-progress-track">
+        <div class="quiz-progress-fill" data-slot="progress-fill"></div>
+      </div>
+      <div class="quiz-progress-meta">
+        <span data-slot="progress-count">1 / 20</span>
+        <span class="quiz-progress-dot">·</span>
+        <span data-slot="progress-bank"></span>
+      </div>
+    </div>
+
+    <div class="quiz-question-body glass">
+      <div class="quiz-question-num" data-slot="q-num">Question 01</div>
+      <h2 class="quiz-question-text" data-slot="q-text"></h2>
+      <div class="quiz-options" data-slot="q-options"></div>
+    </div>
+
+    <div class="quiz-nav">
+      <button class="btn-ghost" data-action="prev">← 上一题</button>
+      <span class="quiz-nav-hint">选择一个选项后自动进入下一题</span>
+    </div>
+  </section>
+
+  <!-- ============ 结果页 ============ -->
+  <section class="quiz-stage quiz-result" data-stage="result" hidden>
+
+    <div class="quiz-reveal" data-slot="reveal">
+      <p class="section-eyebrow">Your Nocturne Code</p>
+      <div class="quiz-code" data-slot="r-code"></div>
+      <div class="quiz-code-line"></div>
+      <h1 class="quiz-result-title" data-slot="r-name"></h1>
+      <p class="quiz-result-subtitle" data-slot="r-subtitle"></p>
+    </div>
+
+    <div class="quiz-song" data-slot="song">
+      <p class="quiz-song-label">Theme Song</p>
+      <h3 class="quiz-song-title" data-slot="song-title"></h3>
+      <p class="quiz-song-genre" data-slot="song-genre"></p>
+    </div>
+
+    <div class="quiz-scores" data-slot="scores-block">
+      <p class="quiz-block-label">THME 频率</p>
+      <div class="quiz-score-bars" data-slot="scores"></div>
+    </div>
+
+    <div class="quiz-narrative">
+      <div class="quiz-nrc" data-field="coreImage">
+        <div class="quiz-nrc-label">核心意象</div>
+        <p data-slot="coreImage"></p>
+      </div>
+      <div class="quiz-nrc" data-field="loveMode">
+        <div class="quiz-nrc-label">恋爱模式</div>
+        <p data-slot="loveMode"></p>
+      </div>
+      <div class="quiz-nrc" data-field="idealPartner">
+        <div class="quiz-nrc-label">适配恋人</div>
+        <p data-slot="idealPartner"></p>
+      </div>
+      <div class="quiz-nrc" data-field="weakness">
+        <div class="quiz-nrc-label">致命弱点</div>
+        <p data-slot="weakness"></p>
+      </div>
+    </div>
+
+    <blockquote class="quiz-monologue" data-slot="monologue-block">
+      <span class="quiz-monologue-quote">"</span>
+      <p data-slot="monologue"></p>
+    </blockquote>
+
+    <div class="quiz-note" data-slot="note-block">
+      <p class="quiz-note-label">缥缈纸条</p>
+      <p class="quiz-note-body" data-slot="note"></p>
+    </div>
+
+    <div class="quiz-chars" data-slot="chars-block">
+      <p class="quiz-block-label">推荐角色</p>
+      <div class="quiz-chars-list" data-slot="chars"></div>
+    </div>
+
+    <div class="quiz-actions">
+      <button class="btn-primary" data-action="poster">保存海报</button>
+      <button class="btn-ghost" data-action="copy-link">复制链接</button>
+      <button class="btn-ghost" data-action="retry">重新测试</button>
+      <a class="btn-ghost" href="index.html">换个测试</a>
+    </div>
+
+  </section>
+
+  <!-- ============ 错误 ============ -->
+  <section class="quiz-stage quiz-error" data-stage="error" hidden>
+    <div class="quiz-error-mark">!</div>
+    <h2>出问题了</h2>
+    <p class="quiz-error-msg" data-slot="err-msg"></p>
+    <div class="quiz-actions">
+      <a href="index.html" class="btn-ghost">返回题库</a>
+      <button class="btn-ghost" data-action="reload">重新加载</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- 海报模态 -->
+<div class="quiz-poster-modal" data-slot="poster-modal" hidden>
+  <div class="quiz-poster-backdrop" data-action="close-poster"></div>
+  <div class="quiz-poster-panel">
+    <p class="quiz-poster-hint">长按图片保存，或点下方按钮下载。</p>
+    <div class="quiz-poster-frame">
+      <img data-slot="poster-img" alt="测试结果海报">
+    </div>
+    <div class="quiz-poster-actions">
+      <a class="btn-primary" data-slot="poster-download" download="nocturne-result.png">下载图片</a>
+      <button class="btn-ghost" data-action="close-poster">关闭</button>
+    </div>
+  </div>
+</div>
+
+<div data-include="../../assets/partials/footer.html" data-base="../../"></div>
+
+<script src="../../assets/include.js"></script>
+<script type="module" src="test.js"></script>
+
+</body>
+</html>
