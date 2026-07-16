@@ -24,12 +24,12 @@
 
   <section class="panel glass">
     <h2 class="panel-title">API 配置</h2>
-    <p class="panel-hint">凡需 AI 之模块，皆读取此处。数据仅存于本地浏览器。</p>
+    <p class="panel-hint">所有需要 AI 的模块都会读取这里的配置。数据只存在你的浏览器里。</p>
 
     <label class="field">
       <span class="field-label">Base URL</span>
       <input type="text" id="baseUrl" class="input" placeholder="https://api.openai.com/v1" autocomplete="off" spellcheck="false">
-      <span class="field-hint">兼容 OpenAI 协议之端点，需以 <code>/v1</code> 或等价路径结尾。</span>
+      <span class="field-hint">兼容 OpenAI 协议的接口地址，通常以 <code>/v1</code> 结尾。</span>
     </label>
 
     <label class="field">
@@ -51,7 +51,7 @@
         <option value="">请先拉取模型</option>
       </select>
       <div id="modelFallback" class="field-fallback" hidden>
-        <span class="field-hint">若拉取失败，可手动输入模型名：</span>
+        <span class="field-hint">如果拉取失败，可以在这里手动输入模型名：</span>
         <input type="text" id="modelManual" class="input" placeholder="gpt-4o-mini" autocomplete="off">
       </div>
     </div>
@@ -65,7 +65,7 @@
 
   <section class="panel glass">
     <h2 class="panel-title">主题</h2>
-    <p class="panel-hint">Nocturne 夜曲 · 暗夜哥特。Aria 咏叹 · 极简白昼。</p>
+    <p class="panel-hint">Nocturne 是暗色调；Aria 是浅色调。</p>
     <div class="theme-picker">
       <button type="button" class="theme-swatch" data-theme-choice="nocturne">
         <span class="swatch swatch-nocturne"></span>
@@ -81,8 +81,8 @@
   <section class="panel glass panel-quiet">
     <h2 class="panel-title">关于</h2>
     <p class="panel-hint">
-      Nocturne 是一处静态的角色扮演伴侣。数据不出你的浏览器，无历史记录，无服务端。<br>
-      每一模块独立运作，互不干扰。
+      Nocturne 是一个纯静态的角色扮演辅助工具站。没有服务端，没有历史记录，数据全部留在你的浏览器里。<br>
+      每个模块独立运作，互不干扰。
     </p>
   </section>
 
@@ -124,7 +124,7 @@
     const baseUrl = $('#baseUrl').value.trim();
     const apiKey = $('#apiKey').value.trim();
     if (!baseUrl || !apiKey) {
-      showMsg('请先填写 Base URL 与 API Key', 'err');
+      showMsg('请先填写 Base URL 和 API Key', 'err');
       return;
     }
     btn.disabled = true;
@@ -148,7 +148,7 @@
       showMsg(`已拉取 ${models.length} 个模型`, 'ok');
     } catch (err) {
       modelFallback.hidden = false;
-      showMsg('拉取失败，可手动输入。' + (err.message || ''), 'err');
+      showMsg('拉取失败，可以手动输入。' + (err.message || ''), 'err');
     } finally {
       btn.disabled = false;
       btn.innerHTML = '<span class="btn-icon">↻</span> 拉取模型列表';
@@ -169,7 +169,7 @@
   });
 
   $('#clearConfig').addEventListener('click', () => {
-    if (!confirm('清除所有 API 配置？')) return;
+    if (!confirm('确定要清除所有 API 配置吗？')) return;
     clearConfig();
     $('#baseUrl').value = '';
     $('#apiKey').value = '';
@@ -203,3 +203,4 @@
 
 </body>
 </html>
+
