@@ -1,3 +1,19 @@
+{
+  "id": "persona-test",
+  "name": "AI-RP 灵魂画像",
+  "subtitle": "21 道题，测出你在虚拟关系里的 7 维度偏好",
+  "matcher": "persona-matcher",
+  "resultsRef": "persona-test-results",
+  "dimensions": {
+    "A": { "name": "Attachment", "label": "依恋倾向", "low": "游离者",   "high": "探索者" },
+    "B": { "name": "Bonding",    "label": "情感联结", "low": "细水派",   "high": "烈火派" },
+    "C": { "name": "Confession", "label": "表达风格", "low": "直球选手", "high": "暧昧大师" },
+    "D": { "name": "Drama",      "label": "剧情偏好", "low": "治愈日常", "high": "宿命虐恋" },
+    "E": { "name": "Eros",       "label": "亲密尺度", "low": "纯爱战士", "high": "午夜场导演" },
+    "F": { "name": "Fantasy",    "label": "幻想投入", "low": "现实投射", "high": "幻想浸透" },
+    "G": { "name": "Guidance",   "label": "主导权",   "low": "掌镜人",   "high": "沉浸者" }
+  },
+  "questions": 
 [
   {
     "id": 1,
@@ -330,3 +346,4 @@
     ]
   }
 ]
+}
