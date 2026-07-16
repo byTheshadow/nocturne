@@ -393,10 +393,17 @@ function escapeHtml(str) {
 }
 
 // ---------- Go ----------
-document.addEventListener('partials:ready', bootstrap, { once: true });
-// 兜底：如果 partials 未使用或已加载完成
-if (document.readyState === 'complete') {
-  setTimeout(() => {
-    if (!bank && !engine) bootstrap();
-  }, 500);
+let __started = false;
+function boot() {
+  if (__started) return;
+  __started = true;
+  bootstrap();
+}
+// partials 加载完就启动（用于顶栏依赖）
+document.addEventListener('partials:ready', boot, { once: true });
+// 兜底：DOM 已 ready 就直接启动，不必等 partials（测试逻辑本身与顶栏无关）
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot, { once: true });
+} else {
+  boot();
 }

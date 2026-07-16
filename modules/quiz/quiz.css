@@ -754,6 +754,8 @@
   padding: 20px;
   animation: quiz-fade-in .3s ease;
 }
+.quiz-poster-modal[hidden] { display: none; }
+
 .quiz-poster-backdrop {
   position: absolute;
   inset: 0;
