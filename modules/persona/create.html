@@ -222,21 +222,33 @@
     </section>
 
        <!-- 阶段 C：生成中 -->
-    <section class="persona-stage" data-stage="generating" hidden>
-      <div class="bento-card tech-corners persona-loading-card">
-        
-        <div class="ethereal-loader" aria-hidden="true">
-          <div class="ethereal-core"></div>
-          <div class="ethereal-dust"></div>
-        </div>
-        
-        <p class="persona-loading-text">AI 正在演算候选乐章</p>
-        <p class="persona-loading-status font-mono" data-slot="loading-status">0 / 3 完成</p>
-        <div class="persona-loading-actions">
-          <button class="btn-ghost font-mono" data-action="cancel" style="margin-top: 20px;">ABORT</button>
-        </div>
-      </div>
-    </section>
+   
+<section class="persona-stage" data-stage="generating" hidden>
+  <div class="bento-card tech-corners persona-loading-card">
+    <div class="persona-loading-orb" aria-hidden="true">
+      <div class="persona-orbit persona-orbit-1"></div>
+      <div class="persona-orbit persona-orbit-2"></div>
+      <div class="persona-orbit persona-orbit-3"></div>
+    </div>
+
+    <p class="persona-loading-text">正在为你调制三段灵魂</p>
+
+    <div class="persona-loading-poetry" aria-hidden="true">
+      <span>正在收集散落的星辰与呼吸…</span>
+      <span>正在把心跳译成句子…</span>
+      <span>正在校准她/他与你相遇的角度…</span>
+      <span>快好了，最后一段月色调温中…</span>
+    </div>
+
+    <div class="persona-loading-progress"></div>
+    <p class="persona-loading-status" data-slot="loading-status">0 / 3 完成</p>
+
+    <div class="persona-loading-actions">
+      <button class="btn-ghost" data-action="cancel">取消</button>
+    </div>
+  </div>
+</section>
+
 
     <!-- 阶段 D：结果 -->
     <section class="persona-stage" data-stage="result" hidden>

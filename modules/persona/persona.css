@@ -1,44 +1,67 @@
-/* ==========================================================================
-   PART 1: 基础/全局辅助类与背景 (Ambient Background)
-   ========================================================================== */
-.font-mono { font-family: 'JetBrains Mono', 'Space Mono', monospace; }
+/* ============ 人设生产 · 通用字体辅助 ============ */
+.font-mono   { font-family: 'JetBrains Mono', 'Space Mono', monospace; }
 .font-cinzel { font-family: 'Cinzel', serif; }
 
-/* 动态深空背景与网格底纹 */
-.ambient-bg {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  pointer-events: none; z-index: -10; overflow: hidden;
+/* ============ 人设生产模块（.persona-* 独占） ============ */
+.persona-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.4rem 1.5rem 6rem;
+  position: relative;
 }
-.ambient-bg .orb {
-  position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4;
-  animation: floatOrb 20s infinite alternate ease-in-out;
-}
-.ambient-bg .orb-1 {
-  top: -10%; left: 10%; width: 500px; height: 500px; 
-  background: radial-gradient(circle, var(--accent-glow), transparent 60%); 
-}
-.ambient-bg .orb-2 {
-  bottom: -20%; right: 10%; width: 600px; height: 600px; 
-  background: radial-gradient(circle, var(--bg-radial-a), transparent 60%); 
-  animation-delay: -5s; 
-}
-.ambient-bg .grid-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background-image: radial-gradient(color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px);
-  background-size: 30px 30px;
+.persona-bg-ornament {
+  position: absolute;
+  inset: -40px -100px auto -100px;
+  height: 320px;
+  background:
+    radial-gradient(400px 220px at 20% 30%, color-mix(in srgb, var(--accent, #b02838) 12%, transparent), transparent 70%),
+    radial-gradient(500px 280px at 80% 10%, color-mix(in srgb, var(--accent, #b02838) 8%,  transparent), transparent 70%);
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: 0;
 }
 
-@keyframes floatOrb {
-  0%   { transform: translate(0, 0) scale(1); opacity: 0.3; }
-  100% { transform: translate(50px, 50px) scale(1.2); opacity: 0.6; }
+/* Hero */
+.persona-hero { margin-bottom: 1.4rem; position: relative; }
+.persona-eyebrow {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  color: var(--accent, #b02838);
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
 }
+.persona-title {
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  margin: 0 0 0.35rem;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.persona-subtitle {
+  color: var(--text-dim);
+  font-size: 0.95rem;
+  margin: 0;
+}
+.persona-back-link {
+  position: absolute;
+  top: 0.2rem;
+  right: 0;
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.persona-back-link:hover { color: var(--text); }
 
-/* ==========================================================================
-   PART 2: 首页专属视差特效 (.persona-index-main)
-   ========================================================================== */
+/* ================================================================
+   ★ 首页 index.html · 滚动视差专属样式（作用域：.persona-index-main）
+   ================================================================ */
 .persona-index-main {
-  position: relative; min-height: 150vh; overflow-x: hidden;
+  position: relative;
+  min-height: 150vh;
+  overflow-x: hidden;
 }
+
 .persona-index-main .fixed-bg {
   position: fixed; inset: 0; z-index: -10; pointer-events: none;
 }
@@ -56,99 +79,174 @@
   background: radial-gradient(circle, var(--bg-radial-a) 0%, transparent 60%);
   filter: blur(100px); border-radius: 50%;
 }
+
 .persona-index-main .parallax-layer {
-  position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; z-index: -5;
+  position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+  pointer-events: none; z-index: -5;
 }
 .persona-index-main .giant-text {
-  position: absolute; font-weight: 900; font-size: 24vw; color: var(--border-faint);
-  white-space: nowrap; writing-mode: vertical-rl; top: 5vh; right: 2vw; opacity: 0.5;
+  position: absolute; font-weight: 900;
+  font-size: 24vw; color: var(--border-faint);
+  white-space: nowrap; writing-mode: vertical-rl;
+  top: 5vh; right: 2vw; opacity: 0.5;
 }
 .persona-index-main .bg-grid {
   position: absolute; top: 20vh; left: 8vw; width: 400px; height: 600px;
-  background-image: linear-gradient(var(--staff-line) 1px, transparent 1px), linear-gradient(90deg, var(--staff-line) 1px, transparent 1px);
+  background-image: 
+    linear-gradient(var(--staff-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--staff-line) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 .persona-index-main .content-wrapper {
   position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 40px;
 }
 .persona-index-main .hero-section {
-  height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative;
+  height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  position: relative;
 }
 .persona-index-main .status-bar {
-  display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-dim);
-  border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 40px; letter-spacing: 1px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: var(--text-dim);
+  border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 40px;
+  letter-spacing: 1px;
 }
 .persona-index-main .recording { display: flex; align-items: center; gap: 10px; color: var(--text); }
 .persona-index-main .rec-dot {
-  width: 10px; height: 10px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 12px var(--accent-glow); animation: blink 1.2s infinite;
+  width: 10px; height: 10px; background: var(--accent); border-radius: 50%;
+  box-shadow: 0 0 12px var(--accent-glow); animation: blink 1.2s infinite;
 }
 .persona-index-main .time-code { color: var(--accent); font-weight: bold; }
-.persona-index-main .visualizer { display: flex; gap: 6px; height: 80px; align-items: flex-end; margin-bottom: 40px; width: 100%; max-width: 400px; }
+.persona-index-main .visualizer {
+  display: flex; gap: 6px; height: 80px; align-items: flex-end; margin-bottom: 40px;
+  width: 100%; max-width: 400px;
+}
 .persona-index-main .vol-bar { flex: 1; display: flex; flex-direction: column; gap: 4px; justify-content: flex-end; }
 .persona-index-main .vol-dot { width: 100%; padding-bottom: 100%; background: var(--border); transition: background 0.1s; border-radius: 1px; }
 .persona-index-main .vol-dot.active { background: var(--text); }
 .persona-index-main .vol-dot.peak { background: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
-.persona-index-main .persona-eyebrow { font-size: 0.85rem; letter-spacing: 0.25em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; font-weight: 700; }
-.persona-index-main .persona-title { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; letter-spacing: 0.02em; margin-bottom: 16px; line-height: 1.1; color: var(--text); }
-.persona-index-main .persona-subtitle { font-size: 1.05rem; color: var(--text-dim); line-height: 1.7; max-width: 480px; }
-.persona-index-main .scroll-indicator {
-  position: absolute; bottom: 6vh; left: 40px; font-size: 12px; color: var(--accent); letter-spacing: 3px; display: flex; align-items: center; gap: 16px; font-weight: 700;
+
+.persona-index-main .persona-eyebrow {
+  font-size: 0.85rem; letter-spacing: 0.25em; color: var(--accent);
+  margin-bottom: 1rem; text-transform: uppercase; font-weight: 700;
 }
-.persona-index-main .scroll-indicator::after { content: ''; display: block; width: 60px; height: 1px; background: var(--accent); }
-.persona-index-main .cards-section { padding: 10vh 0 25vh 0; display: flex; flex-direction: column; gap: 100px; }
+.persona-index-main .persona-title { 
+  font-size: clamp(2.5rem, 5vw, 4rem); 
+  font-weight: 700; letter-spacing: 0.02em; margin-bottom: 16px; line-height: 1.1; 
+  color: var(--text);
+}
+.persona-index-main .persona-subtitle { 
+  font-size: 1.05rem; color: var(--text-dim); line-height: 1.7; max-width: 480px; 
+}
+.persona-index-main .scroll-indicator {
+  position: absolute; bottom: 6vh; left: 40px; font-size: 12px;
+  color: var(--accent); letter-spacing: 3px;
+  display: flex; align-items: center; gap: 16px; font-weight: 700;
+}
+.persona-index-main .scroll-indicator::after {
+  content: ''; display: block; width: 60px; height: 1px; background: var(--accent);
+}
+.persona-index-main .cards-section {
+  padding: 10vh 0 25vh 0; display: flex; flex-direction: column; gap: 100px;
+}
 .persona-index-main .card-wrapper { width: 90%; max-width: 800px; }
 .persona-index-main .card-wrapper:nth-child(1) { align-self: flex-start; }
 .persona-index-main .card-wrapper:nth-child(2) { align-self: flex-end; }
 .persona-index-main .entry-card {
-  display: flex; flex-direction: column; text-decoration: none; color: var(--text); background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border); padding: 48px; border-radius: 20px; position: relative; overflow: hidden; width: 100%; box-shadow: var(--shadow);
+  display: flex; flex-direction: column;
+  text-decoration: none; color: var(--text);
+  background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border); padding: 48px;
+  border-radius: 20px; position: relative; overflow: hidden; width: 100%;
+  box-shadow: var(--shadow);
   transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.persona-index-main .card-top-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; border-bottom: 1px dashed var(--border-strong); padding-bottom: 16px; }
+.persona-index-main .card-top-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 32px; border-bottom: 1px dashed var(--border-strong); padding-bottom: 16px;
+}
 .persona-index-main .entry-index { font-size: 15px; color: var(--accent); font-weight: 700; letter-spacing: 2px; }
 .persona-index-main .entry-sys { font-size: 13px; color: var(--text-dim); letter-spacing: 1px; }
-.persona-index-main .entry-title { font-size: 1.8rem; font-weight: 600; margin-bottom: 16px; transition: transform 0.4s ease; margin-top: 0;}
-.persona-index-main .entry-desc { font-size: 1.05rem; color: var(--text-dim); line-height: 1.7; transition: color 0.3s; max-width: 85%; margin: 0;}
+.persona-index-main .entry-title { font-size: 1.8rem; font-weight: 600; margin-bottom: 16px; margin-top: 0; transition: transform 0.4s ease; }
+.persona-index-main .entry-desc { font-size: 1.05rem; color: var(--text-dim); line-height: 1.7; margin: 0; transition: color 0.3s; max-width: 85%; }
 .persona-index-main .crosshair { position: absolute; width: 20px; height: 20px; opacity: 0.5; transition: all 0.4s ease; }
 .persona-index-main .crosshair::before, .persona-index-main .crosshair::after { content: ''; position: absolute; background: var(--border-strong); }
 .persona-index-main .crosshair::before { top: 50%; left: 0; width: 100%; height: 1px; }
 .persona-index-main .crosshair::after { left: 50%; top: 0; width: 1px; height: 100%; }
-.persona-index-main .ch-tl { top: 24px; left: 24px; } .persona-index-main .ch-br { bottom: 24px; right: 24px; }
+.persona-index-main .ch-tl { top: 24px; left: 24px; } 
+.persona-index-main .ch-br { bottom: 24px; right: 24px; }
 .persona-index-main .marquee {
-  position: absolute; bottom: 0; left: 0; width: 100%; height: 4px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 4px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 .persona-index-main .entry-card:hover {
-  background: var(--surface); border-color: var(--accent); transform: translateY(-8px); box-shadow: var(--shadow-glow), var(--shadow);
+  background: var(--surface);
+  border-color: var(--accent);
+  transform: translateY(-8px); 
+  box-shadow: var(--shadow-glow), var(--shadow);
 }
 .persona-index-main .entry-card:hover .entry-desc { color: var(--text); }
 .persona-index-main .entry-card:hover .crosshair { opacity: 1; transform: scale(1.2) rotate(90deg); }
-.persona-index-main .entry-card:hover .crosshair::before, .persona-index-main .entry-card:hover .crosshair::after { background: var(--accent); }
+.persona-index-main .entry-card:hover .crosshair::before,
+.persona-index-main .entry-card:hover .crosshair::after { background: var(--accent); }
 .persona-index-main .entry-card:hover .marquee { transform: scaleX(1); }
 .persona-index-main .entry-card:hover .entry-title { transform: translateX(12px); color: var(--accent); }
 
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-/* ==========================================================================
-   PART 3: 生产页布局与 Bento Box 卡片 (create.html 独占)
-   ========================================================================== */
-.persona-page { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 6rem; position: relative; z-index: 1; }
-.persona-hero { margin-bottom: 2rem; }
-.persona-eyebrow { font-size: 0.8rem; letter-spacing: 0.2em; color: var(--accent); margin: 0 0 0.5rem; text-transform: uppercase; }
-.persona-title { font-size: clamp(1.8rem, 3vw, 2.5rem); margin: 0 0 0.5rem; color: var(--text); font-weight: 600; letter-spacing: 0.02em; }
-.persona-subtitle { color: var(--text-dim); font-size: 0.95rem; margin: 0; }
-.persona-back-link { color: var(--text-dim); font-size: 0.88rem; text-decoration: none; transition: color 0.2s; letter-spacing: 1px; }
-.persona-back-link:hover { color: var(--accent); }
-
-@keyframes slideUpFade {
-  0%   { opacity: 0; transform: translateY(40px) scale(0.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+@media (max-width: 768px) {
+  .persona-index-main .content-wrapper { padding: 0 24px; }
+  .persona-index-main .giant-text { font-size: 30vw; right: -5vw; opacity: 0.2; }
+  .persona-index-main .bg-grid { left: 0; width: 100%; opacity: 0.5; }
+  .persona-index-main .card-wrapper { width: 100%; }
+  .persona-index-main .entry-card { padding: 32px; border-radius: 16px; }
+  .persona-index-main .cards-section { gap: 60px; }
+  .persona-index-main .card-top-row { flex-direction: column; gap: 8px; }
+  .persona-index-main .scroll-indicator { left: 24px; }
+  .persona-index-main .persona-title { font-size: 2.2rem; }
 }
 
-/* Bento Box 卡片基座 */
+/* ================================================================
+   ★ 制作页 create.html · Bento Box 卡片与装饰
+   ================================================================ */
+
+/* 动态背景与网格 */
+.ambient-bg {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  pointer-events: none; z-index: -1; overflow: hidden;
+}
+.ambient-bg .orb {
+  position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.4;
+  animation: floatOrb 20s infinite alternate ease-in-out;
+}
+.ambient-bg .orb-1 {
+  top: -10%; left: 10%; width: 500px; height: 500px; 
+  background: radial-gradient(circle, var(--accent-glow), transparent 60%); 
+}
+.ambient-bg .orb-2 {
+  bottom: -20%; right: 10%; width: 600px; height: 600px; 
+  background: radial-gradient(circle, var(--bg-radial-a), transparent 60%); 
+  animation-delay: -5s; 
+}
+.ambient-bg .grid-overlay {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(color-mix(in srgb, var(--text) 4%, transparent) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+@keyframes floatOrb {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.3; }
+  100% { transform: translate(50px, 50px) scale(1.2); opacity: 0.6; }
+}
+
+/* Bento 卡片基座 */
+@keyframes slideUpFade {
+  0%   { opacity: 0; transform: translateY(30px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
 .bento-card {
   background: var(--glass-bg);
   border-radius: 16px;
-  padding: 30px 24px;
+  padding: 24px;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(var(--glass-blur));
@@ -156,227 +254,796 @@
   box-shadow: var(--shadow);
   animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   transition: border-color 0.3s ease;
-  margin-bottom: 20px;
 }
 .bento-card > * { position: relative; z-index: 10; }
 
-/* 探照灯光效追踪 */
+/* 探照灯追踪效果 */
 .bento-card::before {
-  content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: radial-gradient(600px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), color-mix(in srgb, var(--text) 4%, transparent), transparent 40%);
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(600px circle at var(--mouse-x, -999px) var(--mouse-y, -999px),
+    color-mix(in srgb, var(--text) 4%, transparent), transparent 40%);
   opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 1;
 }
 .bento-card:hover::before { opacity: 1; }
 
-/* ==========================================================================
-   PART 4: 科技风装饰件 (Tech Ornaments)
-   ========================================================================== */
+/* 四角瞄准框 */
 .tech-corners::after {
-  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+  content: ''; position: absolute; inset: 0; pointer-events: none;
   background: 
-    linear-gradient(to right, var(--text-dim) 2px, transparent 2px) 0 0, linear-gradient(to bottom, var(--text-dim) 2px, transparent 2px) 0 0,
-    linear-gradient(to left, var(--text-dim) 2px, transparent 2px) 100% 0, linear-gradient(to bottom, var(--text-dim) 2px, transparent 2px) 100% 0,
-    linear-gradient(to right, var(--text-dim) 2px, transparent 2px) 0 100%, linear-gradient(to top, var(--text-dim) 2px, transparent 2px) 0 100%,
-    linear-gradient(to left, var(--text-dim) 2px, transparent 2px) 100% 100%, linear-gradient(to top, var(--text-dim) 2px, transparent 2px) 100% 100%;
-  background-size: 15px 15px; background-repeat: no-repeat; opacity: 0.2; transition: opacity 0.3s, transform 0.3s; z-index: 2;
+    linear-gradient(to right,  var(--text-dim) 2px, transparent 2px) 0 0,
+    linear-gradient(to bottom, var(--text-dim) 2px, transparent 2px) 0 0,
+    linear-gradient(to left,   var(--text-dim) 2px, transparent 2px) 100% 0,
+    linear-gradient(to bottom, var(--text-dim) 2px, transparent 2px) 100% 0,
+    linear-gradient(to right,  var(--text-dim) 2px, transparent 2px) 0 100%,
+    linear-gradient(to top,    var(--text-dim) 2px, transparent 2px) 0 100%,
+    linear-gradient(to left,   var(--text-dim) 2px, transparent 2px) 100% 100%,
+    linear-gradient(to top,    var(--text-dim) 2px, transparent 2px) 100% 100%;
+  background-size: 15px 15px; background-repeat: no-repeat;
+  opacity: 0.2; transition: opacity 0.3s, transform 0.3s; z-index: 2;
 }
-.bento-card:hover .tech-corners::after { opacity: 0.6; transform: scale(0.99); }
+.bento-card:hover .tech-corners::after { opacity: 0.55; transform: scale(0.99); }
 
+/* 竖排数据条 */
 .deco-vertical {
   position: absolute; right: 12px; top: 40px; writing-mode: vertical-rl;
-  font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent); letter-spacing: 2px; opacity: 0.6; pointer-events: none; z-index: 5;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--accent);
+  letter-spacing: 2px; opacity: 0.6; pointer-events: none; z-index: 5;
 }
 
+/* 扫描线 */
 .scanline {
-  position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  box-shadow: 0 0 10px var(--accent-glow); opacity: 0.5; z-index: 4; pointer-events: none; animation: scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  box-shadow: 0 0 10px var(--accent-glow); opacity: 0.5; z-index: 4; pointer-events: none;
+  animation: scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
-@keyframes scan { 0% { top: 0; opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.6; } 100% { top: 100%; opacity: 0; } }
+@keyframes scan {
+  0%   { top: 0; opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { top: 100%; opacity: 0; }
+}
 
+/* 旋转雷达 */
 .spin-radar {
-  width: 64px; height: 64px; border-radius: 50%; border: 1px dashed var(--text-dim); position: relative;
-  animation: spin 12s linear infinite; display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 1px dashed var(--text-dim); position: relative;
+  animation: spin 12s linear infinite; display: flex; justify-content: center; align-items: center;
+  flex-shrink: 0;
 }
-.spin-radar::before { content: ''; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--accent); opacity: 0.5; }
-.spin-radar::after { content: ''; position: absolute; top: 0; left: 50%; width: 1px; height: 50%; background: var(--accent); transform-origin: bottom; }
-@keyframes spin { 100% { transform: rotate(360deg); } }
+.spin-radar::before {
+  content: ''; width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--accent); opacity: 0.5;
+}
+.spin-radar::after {
+  content: ''; position: absolute; top: 0; left: 50%; width: 1px; height: 50%;
+  background: var(--accent); transform-origin: bottom;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 /* 音频均衡器 */
 .audio-visualizer { display: flex; align-items: center; gap: 4px; height: 30px; }
-.audio-visualizer .bar { width: 3px; height: 5px; background: var(--text-dim); transition: height 0.1s ease, background 0.2s, box-shadow 0.2s; }
+.audio-visualizer .bar { 
+  width: 3px; height: 5px; background: var(--text-dim); 
+  transition: height 0.1s ease, background 0.2s, box-shadow 0.2s; 
+}
+
+/* 条形码 */
 .barcode { display: flex; gap: 3px; height: 20px; align-items: center; opacity: 0.5; }
 .barcode i { width: 2px; background: currentColor; height: 100%; }
 .barcode i:nth-child(even) { width: 4px; }
-.barcode i:nth-child(3n) { height: 60%; }
+.barcode i:nth-child(3n)  { height: 60%; }
 
-/* ==========================================================================
-   PART 5: 表单与交互组件 (Inputs, Chips, Buttons)
-   ========================================================================== */
-.persona-setup-grid { display: grid; gap: 24px; grid-template-columns: 1fr; align-items: start; }
-@media (min-width: 960px) { .persona-setup-grid { grid-template-columns: minmax(0, 1fr) 360px; } }
-.persona-setup-aside { position: sticky; top: 2rem; display: flex; flex-direction: column; gap: 20px; }
+/* ============ 公示（notice 阶段） ============ */
+.persona-notice-card {
+  max-width: 560px;
+  margin: 2rem auto;
+  padding: 3rem 2.5rem 2.5rem;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+}
+.persona-notice-glyph {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  color: var(--accent, #b02838);
+  opacity: 0.7;
+  margin-bottom: 0.8rem;
+}
+.persona-notice-title {
+  font-size: 1.4rem;
+  margin: 0 0 1.5rem;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.persona-notice-card p {
+  color: var(--text-dim);
+  line-height: 1.9;
+  margin: 0.6rem 0;
+}
+.persona-notice-thanks {
+  color: var(--accent, #b02838) !important;
+  margin-top: 1.4rem !important;
+  letter-spacing: 0.1em;
+}
+.persona-notice-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
 
-.persona-section-head { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.2rem; }
+/* ============ 设置阶段 ============ */
+.persona-setup-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.6rem;
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .persona-setup-grid { grid-template-columns: 1fr; }
+  .persona-setup-aside { position: static !important; }
+}
+.persona-setup-main  { display: flex; flex-direction: column; gap: 1.2rem; }
+.persona-setup-aside {
+  position: sticky; top: 1.5rem;
+  display: flex; flex-direction: column;
+  gap: 1rem;
+}
+
+/* 区块 */
+.persona-section {
+  padding: 1.5rem 1.6rem;
+  border-radius: 16px;
+}
+.persona-section-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
 .persona-section-title {
-  display: flex; align-items: center; gap: 8px; text-transform: uppercase; 
-  letter-spacing: 1px; font-family: var(--font-mono); font-size: 1.05rem; margin: 0; color: var(--text);
+  font-size: 1.05rem;
+  color: var(--text);
+  margin: 0;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
-.persona-section-title::before { content: "["; color: var(--accent); } 
-.persona-section-title::after  { content: "]"; color: var(--accent); }
+.persona-section-title::before { content: "["; color: var(--accent); font-family: 'JetBrains Mono', monospace; opacity: 0.7; }
+.persona-section-title::after  { content: "]"; color: var(--accent); font-family: 'JetBrains Mono', monospace; opacity: 0.7; }
 
-.persona-required-badge { font-size: 0.75rem; color: var(--danger); border: 1px solid var(--danger); padding: 0.15rem 0.5rem; border-radius: 4px; }
-.persona-optional-badge { font-size: 0.75rem; color: var(--text-dim); border: 1px solid var(--border-strong); padding: 0.15rem 0.5rem; border-radius: 4px; }
-.persona-hint { font-size: 0.85rem; color: var(--text-dim); margin: 0 0 1rem; line-height: 1.5; }
-
-.persona-field { margin-bottom: 1.5rem; }
-.persona-field:last-child { margin-bottom: 0; }
-.persona-label { display: block; font-size: 0.9rem; color: var(--text); margin-bottom: 0.5rem; font-weight: 500; }
-
-.persona-textarea, .persona-input {
-  width: 100%; background: color-mix(in srgb, var(--bg) 40%, transparent); border: 1px solid var(--border);
-  color: var(--text); border-radius: 8px; padding: 0.8rem 1rem; font-family: inherit; font-size: 0.95rem;
-  transition: all 0.3s ease; box-sizing: border-box; line-height: 1.6;
+.persona-required-badge, .persona-optional-badge {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
 }
-.persona-textarea { resize: vertical; min-height: 120px; }
-.persona-textarea-large { min-height: 200px; }
-.persona-textarea-tall { min-height: 300px; }
-.persona-textarea:focus, .persona-input:focus {
-  outline: none; border-color: var(--accent); background: color-mix(in srgb, var(--bg) 70%, transparent); box-shadow: 0 0 15px var(--accent-glow);
+.persona-required-badge {
+  background: color-mix(in srgb, var(--accent, #b02838) 20%, transparent);
+  color: var(--accent, #b02838);
 }
-
-.persona-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
-.persona-chip {
-  background: transparent; border: 1px solid var(--border-strong); color: var(--text-dim);
-  padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; transition: all 0.2s;
-  font-size: 0.88rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.5px;
-}
-.persona-chip:hover { border-color: var(--text); color: var(--text); transform: translateY(-2px); }
-.persona-chip.is-active {
-  background: var(--text); color: var(--bg); border-color: var(--text); font-weight: bold;
-  box-shadow: 0 4px 15px color-mix(in srgb, var(--text) 20%, transparent);
-}
-.persona-chip[data-value="off"].is-active, .persona-chip[data-value="default"].is-active {
-  background: var(--accent); color: var(--bg); border-color: var(--accent); box-shadow: 0 4px 15px var(--accent-glow);
+.persona-optional-badge {
+  background: var(--bg-soft, rgba(255,255,255,0.04));
+  color: var(--text-faint, var(--text-dim));
 }
 
-/* 世界观卡片 */
-.persona-world-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 1.5rem; }
+.persona-field { margin-top: 1rem; }
+.persona-field:first-child { margin-top: 0; }
+.persona-label {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.02em;
+}
+.persona-hint {
+  font-size: 0.82rem;
+  color: var(--text-faint, var(--text-dim));
+  margin: 0 0 0.7rem;
+  line-height: 1.7;
+}
+.persona-slot { margin-top: 0.8rem; }
+
+/* 世界观网格卡 */
+.persona-world-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.7rem;
+}
 .persona-world-card {
-  border: 1px solid var(--border-strong); border-radius: 8px; padding: 1rem; cursor: pointer; transition: all 0.2s; text-align: left; background: transparent;
+  background: var(--glass-bg, rgba(255,255,255,0.03));
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  color: var(--text-dim);
+  padding: 1rem 0.9rem;
+  border-radius: 14px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
-.persona-world-card:hover { border-color: var(--text); background: var(--surface); }
-.persona-world-card.is-active { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent); }
-.persona-world-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; opacity: 0.8; }
-.persona-world-name { display: block; font-weight: 500; font-size: 1rem; color: var(--text); margin-bottom: 0.3rem; }
-.persona-world-desc { display: block; font-size: 0.8rem; color: var(--text-dim); line-height: 1.4; }
-
-.btn-primary.persona-generate-btn {
-  width: 100%; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;
-  display: flex; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s ease; border: 1px solid transparent;
-  padding: 1rem; cursor: pointer;
+.persona-world-card:hover {
+  border-color: var(--accent, #b02838);
+  color: var(--text);
+  transform: translateY(-2px);
 }
-.btn-primary.persona-generate-btn:hover { background: var(--text) !important; color: var(--bg) !important; box-shadow: 0 0 25px var(--accent-glow); transform: scale(1.02); }
-.persona-tip { font-size: 0.8rem; color: var(--text-dim); text-align: center; margin-top: 10px; }
+.persona-world-card.is-active {
+  border-color: var(--accent, #b02838);
+  background: color-mix(in srgb, var(--accent, #b02838) 12%, transparent);
+  color: var(--text);
+}
+.persona-world-card.is-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  box-shadow: inset 0 0 30px color-mix(in srgb, var(--accent, #b02838) 25%, transparent);
+  pointer-events: none;
+}
+.persona-world-emoji { font-size: 1.4rem; margin-bottom: 0.2rem; }
+.persona-world-name  { font-size: 0.98rem; color: var(--text); font-weight: 500; }
+.persona-world-sub   { font-size: 0.78rem; color: var(--accent, #b02838); letter-spacing: 0.02em; }
+.persona-world-desc  { font-size: 0.78rem; color: var(--text-faint, var(--text-dim)); line-height: 1.6; margin-top: 0.15rem; }
 
-.persona-tag-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+/* Chips */
+.persona-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+.persona-chips-block { flex-direction: column; align-items: stretch; }
+.persona-chips-block .persona-chip { justify-content: flex-start; }
+
+.persona-chip {
+  background: var(--glass-bg, rgba(255,255,255,0.03));
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  color: var(--text-dim);
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  line-height: 1.4;
+}
+.persona-chip:hover {
+  border-color: var(--accent, #b02838);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+.persona-chip.is-active {
+  background: var(--accent, #b02838);
+  color: var(--bg);
+  border-color: var(--accent, #b02838);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+.persona-chip.is-active .persona-chip-desc { color: rgba(13,13,16,0.7); }
+.persona-chip-desc {
+  font-size: 0.75rem;
+  color: var(--text-faint, var(--text-dim));
+  opacity: 0.85;
+}
+
+/* 关系 tag 云 */
+.persona-tag-cloud {
+  display: flex; flex-wrap: wrap;
+  gap: 0.5rem; margin-bottom: 0.8rem;
+}
+.persona-tag {
+  background: transparent;
+  border: 1px dashed var(--border, rgba(255,255,255,0.15));
+  color: var(--text-dim);
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  transition: all 0.18s ease;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.persona-tag:hover {
+  border-color: var(--accent, #b02838);
+  color: var(--text);
+}
+.persona-tag.is-active {
+  background: color-mix(in srgb, var(--accent, #b02838) 15%, transparent);
+  border-color: var(--accent, #b02838);
+  border-style: solid;
+  color: var(--text);
+}
+.persona-tag.is-custom { border-style: dotted; }
+.persona-tag-remove {
+  color: var(--text-faint, var(--text-dim));
+  font-size: 1rem; line-height: 1;
+  cursor: pointer; padding: 0 0.15rem;
+}
+.persona-tag-remove:hover { color: var(--accent, #b02838); }
+
 .persona-tag-input-row { display: flex; gap: 0.5rem; }
-.persona-tag-input { flex: 1; }
-.btn-ghost { background: transparent; border: 1px solid var(--border-strong); color: var(--text); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
-.btn-ghost:hover { background: var(--surface); border-color: var(--text); }
+.persona-tag-input     { flex: 1; }
+.persona-tag-add       { flex-shrink: 0; padding: 0.55rem 1rem; }
 
-.persona-slot[hidden], [hidden] { display: none !important; }
+/* 输入 */
+.persona-textarea, .persona-input {
+  width: 100%;
+  background: color-mix(in srgb, var(--bg) 40%, transparent);
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  color: var(--text);
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  font: inherit;
+  line-height: 1.7;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+.persona-textarea:focus, .persona-input:focus {
+  outline: none;
+  border-color: var(--accent, #b02838);
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+.persona-textarea       { min-height: 100px; }
+.persona-textarea-large { min-height: 200px; }
+.persona-textarea-tall  { min-height: 260px; }
 
-/* ==========================================================================
-   PART 6: 唯美生成中动效 (Loading / Result / Error)
-   ========================================================================== */
-
-/* 灵魂交响/星尘纺锤 - 唯美加载动效核心 */
-.persona-loading-card { text-align: center; padding: 4rem 2rem !important; }
-
-.ethereal-loader {
-  position: relative; width: 140px; height: 140px; margin: 0 auto 40px;
-}
-/* 外圈星轨 */
-.ethereal-loader::before, .ethereal-loader::after {
-  content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid transparent;
-}
-.ethereal-loader::before {
-  border-top-color: var(--accent); border-right-color: color-mix(in srgb, var(--accent) 30%, transparent);
-  animation: spin-ethereal 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-.ethereal-loader::after {
-  inset: 15px; border-bottom-color: var(--text); border-left-color: color-mix(in srgb, var(--text) 20%, transparent);
-  animation: spin-ethereal 2s cubic-bezier(0.4, 0, 0.2, 1) infinite reverse;
-}
-/* 核心孕育光球 */
-.ethereal-core {
-  position: absolute; inset: 40px; background: var(--accent); border-radius: 50%;
-  box-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent), inset 0 0 10px #fff;
-  animation: pulse-core 2s ease-in-out infinite alternate;
-}
-/* 上升的星尘斑点 (利用多重box-shadow实现) */
-.ethereal-dust {
-  position: absolute; top: 50%; left: 50%; width: 3px; height: 3px; background: transparent; border-radius: 50%;
-  box-shadow: 
-    -20px -30px 2px var(--accent), 30px -50px 3px var(--text),
-    10px -70px 1px var(--accent), -40px -20px 2px var(--text),
-    -10px -90px 2px var(--accent), 25px -10px 1px var(--text);
-  animation: float-dust 4s linear infinite;
+.persona-nsfw-note {
+  margin-top: 0.8rem;
+  padding: 0.6rem 0.9rem;
+  background: color-mix(in srgb, var(--accent, #b02838) 8%, transparent);
+  border-left: 2px solid var(--accent, #b02838);
+  border-radius: 4px;
+  color: var(--text-dim);
 }
 
-@keyframes spin-ethereal { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes pulse-core { 0% { transform: scale(0.8); opacity: 0.7; } 100% { transform: scale(1.1); opacity: 1; filter: brightness(1.2); } }
-@keyframes float-dust {
-  0% { transform: translateY(0) scale(1); opacity: 0; }
-  50% { opacity: 0.8; }
-  100% { transform: translateY(-80px) scale(0.5); opacity: 0; }
+/* 右侧生成栏 */
+.persona-extra-card {
+  padding: 1.4rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+}
+.persona-generate-btn {
+  width: 100%;
+  padding: 0.95rem;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  display: flex; align-items: center; justify-content: center; gap: 15px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+.persona-generate-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px var(--accent-glow);
+}
+.persona-tip {
+  font-size: 0.78rem;
+  color: var(--text-faint, var(--text-dim));
+  line-height: 1.7;
+  margin: 0.2rem 0 0;
+  text-align: center;
 }
 
-/* 带有诗意的渐变呼吸文字 */
+/* ================================================================
+   ★ 生成中阶段 · 「灵魂调制器」 —— 唯美动效
+   ================================================================ */
+.persona-loading-card {
+  max-width: 560px;
+  margin: 3rem auto;
+  padding: 3.5rem 2.5rem 2.8rem;
+  border-radius: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 卡片背景的微弱星尘 */
+.persona-loading-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(1px 1px at 20% 30%, color-mix(in srgb, var(--text) 40%, transparent), transparent 50%),
+    radial-gradient(1px 1px at 70% 20%, color-mix(in srgb, var(--text) 30%, transparent), transparent 50%),
+    radial-gradient(1px 1px at 40% 70%, color-mix(in srgb, var(--accent) 60%, transparent), transparent 50%),
+    radial-gradient(1px 1px at 85% 65%, color-mix(in srgb, var(--text) 35%, transparent), transparent 50%),
+    radial-gradient(1px 1px at 15% 85%, color-mix(in srgb, var(--accent) 50%, transparent), transparent 50%);
+  opacity: 0.6;
+  animation: persona-stars 6s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes persona-stars {
+  0%   { opacity: 0.25; transform: translateY(0); }
+  100% { opacity: 0.7;  transform: translateY(-6px); }
+}
+
+/* 中央「灵魂调制器」 —— 三层同心轨道 */
+.persona-loading-orb {
+  --orb-size: 180px;
+  width: var(--orb-size);
+  height: var(--orb-size);
+  border-radius: 50%;
+  margin: 0 auto 2rem;
+  position: relative;
+  background: none;
+  animation: none;    /* 覆盖旧的 pulse */
+  z-index: 2;
+}
+
+/* 中心核 —— 呼吸的一点小心脏 */
+.persona-loading-orb::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--accent, #b02838), color-mix(in srgb, var(--accent) 50%, transparent) 70%, transparent);
+  box-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-glow);
+  transform: translate(-50%, -50%);
+  animation: persona-core-beat 1.6s ease-in-out infinite;
+}
+@keyframes persona-core-beat {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.75; }
+  50%      { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+}
+
+/* 声纹外扩光晕 —— 用 ::after 造出向外呼吸的一圈 */
+.persona-loading-orb::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 40px; height: 40px;
+  margin: -20px 0 0 -20px;
+  border-radius: 50%;
+  border: 1px solid var(--accent, #b02838);
+  opacity: 0;
+  animation: persona-wave 2.4s ease-out infinite;
+}
+@keyframes persona-wave {
+  0%   { transform: scale(0.4); opacity: 0.9; }
+  100% { transform: scale(4.2); opacity: 0; }
+}
+
+/* 轨道 —— 三层同心圆，附行星（星点） */
+.persona-orbit {
+  position: absolute;
+  top: 50%; left: 50%;
+  border-radius: 50%;
+  border: 1px dashed color-mix(in srgb, var(--text) 15%, transparent);
+  transform: translate(-50%, -50%);
+}
+.persona-orbit::before,
+.persona-orbit::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  box-shadow: 0 0 12px currentColor;
+}
+
+/* 第一层 —— 内轨，红色行星，顺时针 */
+.persona-orbit-1 {
+  width: 90px; height: 90px;
+  color: var(--accent, #b02838);
+  animation: persona-spin 4s linear infinite;
+}
+.persona-orbit-1::before {
+  width: 6px; height: 6px; background: var(--accent, #b02838);
+  top: -3px; left: 50%; margin-left: -3px;
+}
+
+/* 第二层 —— 中轨，实线更淡，白色行星，逆时针 */
+.persona-orbit-2 {
+  width: 130px; height: 130px;
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--text) 10%, transparent);
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+  animation: persona-spin 7s linear infinite reverse;
+}
+.persona-orbit-2::before {
+  width: 4px; height: 4px; background: var(--text);
+  top: 50%; right: -2px; margin-top: -2px;
+}
+.persona-orbit-2::after {
+  width: 3px; height: 3px; background: var(--text);
+  bottom: 8%; left: 12%; opacity: 0.7;
+}
+
+/* 第三层 —— 外轨，最慢，两颗小星 */
+.persona-orbit-3 {
+  width: 170px; height: 170px;
+  color: var(--accent, #b02838);
+  animation: persona-spin 11s linear infinite;
+}
+.persona-orbit-3::before {
+  width: 5px; height: 5px; background: var(--accent, #b02838);
+  bottom: -2.5px; left: 50%; margin-left: -2.5px;
+  opacity: 0.7;
+}
+.persona-orbit-3::after {
+  width: 3px; height: 3px; background: color-mix(in srgb, var(--text) 60%, transparent);
+  top: 30%; left: -1.5px;
+}
+
+@keyframes persona-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 文字：唯美诗意的载入语（自动切换 4 句） */
 .persona-loading-text {
-  font-size: 1.2rem; font-weight: 500; letter-spacing: 3px; margin: 0 0 1rem;
-  background: linear-gradient(90deg, var(--text-dim), var(--text), var(--text-dim));
-  background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  animation: shine-text 3s linear infinite;
-}
-/* 用伪元素实现文字轮播假象 */
-.persona-loading-text::after {
-  content: "正在编织角色灵魂骨架...";
-  display: block; font-size: 0.85rem; letter-spacing: 2px; margin-top: 10px; color: var(--accent);
-  -webkit-text-fill-color: var(--accent); text-transform: uppercase; font-family: var(--font-mono);
-  animation: poetry-fade 6s ease-in-out infinite;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  position: relative;
+  min-height: 1.6em;
+  z-index: 2;
 }
 
-@keyframes shine-text { to { background-position: 200% center; } }
-@keyframes poetry-fade {
-  0%, 100% { opacity: 0; content: "正在解析世界线脉络..."; }
-  25%, 45% { opacity: 1; content: "正在解析世界线脉络..."; }
-  50% { opacity: 0; content: "正在聆听时空共鸣..."; }
-  75%, 95% { opacity: 1; content: "正在聆听时空共鸣..."; }
+/* 用 data-poetry 挂 4 段诗，纯 CSS 轮播 */
+.persona-loading-poetry {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  letter-spacing: 0.14em;
+  margin: 0.8rem auto 1.4rem;
+  min-height: 1.4em;
+  max-width: 380px;
+  line-height: 1.8;
+  position: relative;
+  z-index: 2;
+}
+.persona-loading-poetry span {
+  position: absolute;
+  left: 0; right: 0;
+  opacity: 0;
+  animation: persona-poetry 14.4s linear infinite;
+  font-style: italic;
+}
+.persona-loading-poetry span:nth-child(1) { animation-delay: 0s;      }
+.persona-loading-poetry span:nth-child(2) { animation-delay: 3.6s;    }
+.persona-loading-poetry span:nth-child(3) { animation-delay: 7.2s;    }
+.persona-loading-poetry span:nth-child(4) { animation-delay: 10.8s;   }
+@keyframes persona-poetry {
+  0%    { opacity: 0; transform: translateY(6px);  }
+  4%    { opacity: 1; transform: translateY(0);    }
+  22%   { opacity: 1; transform: translateY(0);    }
+  27%   { opacity: 0; transform: translateY(-6px); }
+  100%  { opacity: 0; transform: translateY(-6px); }
 }
 
-.persona-loading-status { font-size: 1rem; color: var(--text-dim); margin-bottom: 2rem; font-family: var(--font-mono); }
+/* 进度光带 */
+.persona-loading-status {
+  color: var(--accent, #b02838);
+  margin: 0 0 1.4rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.16em;
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+  z-index: 2;
+}
+.persona-loading-progress {
+  height: 2px;
+  width: 220px;
+  margin: 0 auto 1.6rem;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  z-index: 2;
+}
+.persona-loading-progress::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg,
+    transparent,
+    var(--accent, #b02838),
+    color-mix(in srgb, var(--text) 80%, transparent),
+    var(--accent, #b02838),
+    transparent);
+  box-shadow: 0 0 8px var(--accent-glow);
+  animation: persona-progress-scan 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes persona-progress-scan {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%);  }
+}
 
-/* 结果与错误状态 */
-.persona-result-header { padding: 1.5rem 2rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-.persona-tabs { display: flex; gap: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.persona-loading-actions {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============ 结果阶段 ============ */
+.persona-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.6rem;
+  padding: 1.2rem 1.4rem;
+  border-bottom: 1px solid var(--border-faint, rgba(255,255,255,0.06));
+}
+.persona-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .persona-tab {
-  background: transparent; border: none; color: var(--text-dim); font-size: 1rem; cursor: pointer; padding: 0.5rem 1rem;
-  position: relative; transition: color 0.2s; font-family: var(--font-mono); text-transform: uppercase;
+  background: transparent;
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  color: var(--text-dim);
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
 }
-.persona-tab:hover { color: var(--text); }
-.persona-tab.is-active { color: var(--accent); font-weight: bold; }
-.persona-tab.is-active::after { content: ''; position: absolute; bottom: -0.5rem; left: 0; width: 100%; height: 2px; background: var(--accent); }
-.persona-result-actions { display: flex; gap: 0.5rem; }
-.persona-result-body { display: grid; gap: 1.5rem; }
-.persona-result-block { padding: 2rem; }
-.persona-result-block-title { font-size: 1.2rem; color: var(--accent); margin: 0 0 1rem; border-bottom: 1px dashed var(--border-strong); padding-bottom: 0.5rem; }
-.persona-result-content { font-size: 0.95rem; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+.persona-tab:hover { color: var(--text); border-color: var(--accent, #b02838); }
+.persona-tab.is-active {
+  background: var(--accent, #b02838);
+  color: var(--bg);
+  border-color: var(--accent, #b02838);
+}
+.persona-tab.is-failed { opacity: 0.5; text-decoration: line-through; }
+.persona-result-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
-/* Toast 提示 */
-.persona-toast {
-  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: var(--text); color: var(--bg); padding: 0.8rem 1.5rem; border-radius: 8px;
-  font-size: 0.9rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3); opacity: 0; transition: all 0.3s; z-index: 1000; font-weight: bold;
+.persona-result-body {
+  display: flex; flex-direction: column;
+  gap: 1.1rem;
 }
-.persona-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.persona-block {
+  padding: 1.4rem 1.6rem;
+  border-radius: 16px;
+  animation: persona-fade 0.4s ease both;
+  animation-delay: calc(var(--persona-block-idx, 0) * 60ms);
+}
+.persona-block-nsfw {
+  border-color: color-mix(in srgb, var(--accent, #b02838) 40%, var(--border, rgba(255,255,255,0.12)));
+  background: color-mix(in srgb, var(--accent, #b02838) 4%, var(--glass-bg, rgba(255,255,255,0.03)));
+}
+@keyframes persona-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.persona-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+.persona-block-index {
+  display: inline-block;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  color: var(--accent, #b02838);
+  letter-spacing: 0.15em;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+.persona-block-title {
+  display: inline;
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text);
+  font-weight: 500;
+}
+.persona-block-hint {
+  margin: 0.3rem 0 0;
+  font-size: 0.78rem;
+  color: var(--text-faint, var(--text-dim));
+  line-height: 1.6;
+}
+.persona-block-reroll {
+  font-size: 0.82rem;
+  padding: 0.35rem 0.85rem;
+  flex-shrink: 0;
+}
+.persona-block-content {
+  color: var(--text);
+  line-height: 1.95;
+  padding: 1rem 1.1rem;
+  background: var(--bg-soft, rgba(255,255,255,0.02));
+  border: 1px dashed var(--border-faint, rgba(255,255,255,0.08));
+  border-radius: 12px;
+  min-height: 4rem;
+  white-space: pre-wrap;
+  transition: border-color 0.2s, opacity 0.2s;
+  outline: none;
+  font-size: 0.95rem;
+}
+.persona-block-content:focus {
+  border-style: solid;
+  border-color: var(--accent, #b02838);
+}
+.persona-block-content.is-loading {
+  opacity: 0.45;
+  pointer-events: none;
+  position: relative;
+}
+.persona-block-content.is-loading::after {
+  content: "调制中…";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent, #b02838);
+  font-size: 0.9rem;
+  background: color-mix(in srgb, var(--bg, #0a0a0e) 60%, transparent);
+  border-radius: 12px;
+  letter-spacing: 0.16em;
+}
+
+.persona-fail-card {
+  padding: 2rem;
+  border-radius: 14px;
+  text-align: center;
+  color: var(--text-dim);
+}
+
+/* ============ 错误页 ============ */
+.persona-error-card {
+  max-width: 480px;
+  margin: 3rem auto;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+}
+.persona-error-card h2 { margin: 0 0 0.8rem; color: var(--text); font-weight: 500; }
+.persona-error-card p  { color: var(--text-dim); line-height: 1.7; }
+.persona-error-actions {
+  display: flex; gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* ============ Toast ============ */
+.persona-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 2rem;
+  transform: translate(-50%, 20px);
+  background: color-mix(in srgb, var(--bg, #0a0a0e) 90%, transparent);
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  color: var(--text);
+  padding: 0.7rem 1.3rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: all 0.24s ease;
+  z-index: 999;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+}
+.persona-toast.is-show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.persona-toast[hidden] { display: none; }
+
+.persona-block-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.persona-block-restore {
+  opacity: 0.85;
+}
+.persona-block-restore:hover {
+  opacity: 1;
+}
+
