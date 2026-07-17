@@ -55,9 +55,26 @@ export function openPersonaPoster(data) {
 function palette(theme) {
   const isDark = theme !== 'aria';
   return isDark
-    ? { bg: '#0b0a10', bgSoft: '#16131f', text: '#ebe6d8', dim: '#8a8474', faint: '#4c4738', accent: '#c9a961', line: 'rgba(201,169,97,.28)' }
-    : { bg: '#f4efe4', bgSoft: '#fbf6ea', text: '#26221c', dim: '#6a6255', faint: '#b8b0a0', accent: '#8a6a2d', line: 'rgba(138,106,45,.32)' };
+    ? {
+        bg:     '#0a0a0d',
+        bgSoft: '#1a0e12',
+        text:   '#eae6de',
+        dim:    '#8a8288',
+        faint:  '#4a4548',
+        accent: '#b02838',
+        line:   'rgba(176, 40, 56, 0.32)'
+      }
+    : {
+        bg:     '#f5f5f3',
+        bgSoft: '#ffffff',
+        text:   '#1a1a1e',
+        dim:    '#5a5a62',
+        faint:  '#a8a8ae',
+        accent: '#6b7684',
+        line:   'rgba(107, 118, 132, 0.32)'
+      };
 }
+
 
 /* ============================================================
    THME 海报（保留原实现）
