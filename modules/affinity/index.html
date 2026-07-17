@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="nocturne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>相性卡 · Affinity Card</title>
+
+  <link rel="stylesheet" href="../../assets/base.css">
+  <link rel="stylesheet" href="../../assets/theme.css">
+  <link rel="stylesheet" href="./affinity.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+SC:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div data-include="../../assets/partials/header.html" data-base="../../"></div>
+
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <main class="page affinity-page">
+
+    <section class="affinity-hero bento-card">
+      <div>
+        <p class="affinity-eyebrow font-mono">AFFINITY CARD // Nocturne</p>
+        <h1 class="affinity-title">相性卡</h1>
+        <p class="affinity-subtitle">上传两份人设，看看这段关系会玩出什么味道</p>
+      </div>
+      <a class="affinity-back-link font-mono" href="../../index.html">← RETURN</a>
+    </section>
+
+    <!-- 阶段 A：设置 -->
+    <section class="affinity-stage" data-stage="setup" hidden>
+      <div class="affinity-setup-grid">
+        <div class="affinity-setup-main">
+
+          <!-- 双人人设 -->
+          <div class="bento-card tech-corners affinity-section">
+            <div class="affinity-section-head">
+              <h2 class="affinity-section-title">双方人设</h2>
+              <span class="affinity-required-badge">必填</span>
+            </div>
+
+            <div class="affinity-pair-grid">
+              <!-- User 一方 -->
+              <div class="affinity-persona-panel">
+                <div class="affinity-panel-head">
+                  <label class="affinity-panel-label">User 一方</label>
+                  <div class="affinity-avatar-uploader" data-avatar-preview="user">
+                    <img alt="user avatar preview">
+                    <div class="affinity-avatar-placeholder">
+                      <span>♪</span>
+                      <small>点击上传头像</small>
+                    </div>
+                    <input type="file" data-field="userAvatar" accept="image/*">
+                    <button type="button" class="affinity-avatar-clear" data-action="clear-avatar" data-which="user" title="清除头像">×</button>
+                  </div>
+                </div>
+                <input type="text" class="affinity-input" data-field="userName" placeholder="署名 / 昵称（可选）">
+                <textarea class="affinity-textarea" data-field="userPersona" placeholder=">> 粘贴你自己的人设..."></textarea>
+              </div>
+
+              <!-- Char 一方 -->
+              <div class="affinity-persona-panel">
+                <div class="affinity-panel-head">
+                  <label class="affinity-panel-label">Char 一方</label>
+                  <div class="affinity-avatar-uploader" data-avatar-preview="char">
+                    <img alt="char avatar preview">
+                    <div class="affinity-avatar-placeholder">
+                      <span>♪</span>
+                      <small>点击上传头像</small>
+                    </div>
+                    <input type="file" data-field="charAvatar" accept="image/*">
+                    <button type="button" class="affinity-avatar-clear" data-action="clear-avatar" data-which="char" title="清除头像">×</button>
+                  </div>
+                </div>
+                <input type="text" class="affinity-input" data-field="charName" placeholder="对方名字（可选）">
+                <textarea class="affinity-textarea" data-field="charPersona" placeholder=">> 粘贴想匹配的角色人设..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 关系向 / 性向 / 定位 -->
+          <div class="bento-card tech-corners affinity-section">
+            <div class="affinity-section-head">
+              <h2 class="affinity-section-title">关系参数</h2>
+              <span class="affinity-optional-badge">可选</span>
+            </div>
+
+            <div class="affinity-field">
+              <label class="affinity-label">关系向</label>
+              <p class="affinity-hint">不选就交给 AI 从人设里读</p>
+              <div class="affinity-chips affinity-chips-block" data-field="relationVibe"></div>
+            </div>
+
+            <div class="affinity-field">
+              <label class="affinity-label">性向</label>
+              <div class="affinity-chips" data-field="orientationTag"></div>
+            </div>
+
+            <div class="affinity-field" data-slot="tpPositionField" hidden>
+              <label class="affinity-label">TP 定位（女同关系向）</label>
+              <div class="affinity-chips" data-field="tpPosition"></div>
+            </div>
+
+            <div class="affinity-field">
+              <label class="affinity-label">攻受定位</label>
+              <div class="affinity-chips" data-field="acPosition"></div>
+            </div>
+
+            <div class="affinity-field" data-slot="loveTypeField" hidden>
+              <label class="affinity-label">四爱 / 一爱（异性关系向）</label>
+              <div class="affinity-chips" data-field="loveType"></div>
+            </div>
+          </div>
+
+          <!-- 调用模式 -->
+          <div class="bento-card tech-corners affinity-section">
+            <div class="affinity-section-head">
+              <h2 class="affinity-section-title">调用模式</h2>
+            </div>
+            <div class="affinity-chips affinity-chips-block" data-field="callMode"></div>
+            <p class="affinity-hint affinity-hint-large" data-slot="call-mode-note"></p>
+          </div>
+
+          <!-- 画布主题 -->
+          <div class="bento-card tech-corners affinity-section">
+            <div class="affinity-section-head">
+              <h2 class="affinity-section-title">画布主题</h2>
+              <span class="affinity-optional-badge">最后导出 canvas 用</span>
+            </div>
+            <div class="affinity-theme-grid" data-field="canvasTheme"></div>
+          </div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <aside class="affinity-setup-aside">
+          <div class="bento-card tech-corners affinity-extra-card">
+            <label class="affinity-label">附加要求</label>
+            <p class="affinity-hint">想强调的关系倾向 / 想避开的雷区 / 特别关注的点</p>
+            <textarea class="affinity-textarea affinity-textarea-tall" data-field="extraRequest" placeholder="例：希望重点分析两人对信任的态度差异..."></textarea>
+          </div>
+
+          <button class="btn-primary affinity-generate-btn" data-action="generate">
+            <span class="font-mono">♪ 生成相性卡</span>
+          </button>
+          <p class="affinity-tip">生成期间可以取消。生成后每一块都可以直接编辑，小纸条可以单独换一种载体。</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 阶段 B：生成中 -->
+    <section class="affinity-stage" data-stage="generating" hidden>
+      <div class="bento-card tech-corners affinity-loading-card">
+        <div class="affinity-loading-orb" aria-hidden="true">
+          <div class="affinity-orbit affinity-orbit-1"></div>
+          <div class="affinity-orbit affinity-orbit-2"></div>
+        </div>
+        <p class="affinity-loading-text" data-slot="loading-status">正在生成…</p>
+        <div class="affinity-loading-actions">
+          <button class="btn-ghost" data-action="cancel">取消</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 阶段 C：结果 -->
+    <section class="affinity-stage" data-stage="result" hidden>
+      <div class="affinity-result-header bento-card">
+        <div class="affinity-result-actions">
+          <button class="btn-ghost" data-action="back-setup">修改设置</button>
+          <button class="btn-ghost" data-action="reroll-all">全部重新生成</button>
+          <button class="btn-ghost" data-action="toggle-format" data-slot="format-btn">复制格式：纯文本</button>
+          <button class="btn-ghost" data-action="copy-current">复制</button>
+          <button class="btn-primary" data-action="export-canvas">导出为图片</button>
+        </div>
+      </div>
+      <div class="affinity-result-body" data-slot="result-body"></div>
+    </section>
+
+    <!-- 阶段 D：错误 -->
+    <section class="affinity-stage" data-stage="error" hidden>
+      <div class="bento-card tech-corners affinity-error-card">
+        <h2>出了点问题</h2>
+        <p data-slot="error-message"></p>
+        <div class="affinity-error-actions">
+          <button class="btn-ghost" data-action="back-setup">回到设置</button>
+          <button class="btn-primary" data-action="retry">重试</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Canvas 预览模态 -->
+    <div class="affinity-modal" data-slot="canvas-modal" hidden>
+      <div class="affinity-modal-body">
+        <button class="affinity-modal-close" data-action="close-canvas-modal" aria-label="关闭">×</button>
+        <img alt="affinity card preview">
+        <div class="affinity-modal-actions">
+          <a class="btn-primary" data-action="download-canvas" download>下载图片</a>
+          <button class="btn-ghost" data-action="close-canvas-modal">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="affinity-toast" data-slot="toast" hidden></div>
+  </main>
+
+  <div data-include="../../assets/partials/footer.html" data-base="../../"></div>
+
+  <script type="module" src="./create.js"></script>
+  <script src="../../assets/include.js"></script>
+</body>
+</html>
