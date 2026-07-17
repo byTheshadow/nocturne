@@ -14,7 +14,11 @@ function activeBlocks(config) {
 function hintOf(config, blockId) {
   if (blockId === 'nsfw') return NSFW_BLOCK.hint;
   const w = findWorld(config.worldTemplate);
-  return w?.blockHints?.[blockId] || '';
+  const specific = w?.blockHints?.[blockId];
+  if (specific) return specific;
+  // 回落通用 hint
+  const base = BLOCKS.find(b => b.id === blockId);
+  return base?.hint || '';
 }
 
 // ── System Prompt ────────────────────────────────────────────
@@ -91,10 +95,14 @@ export function buildUserPrompt(config) {
   // 世界观
   if (worldTemplate === 'custom' && customWorld && customWorld.trim()) {
     parts.push(`\n## 世界观（用户自定义）\n${customWorld.trim()}`);
-  } else if (worldTemplate) {
-    const w = findWorld(worldTemplate);
-    if (w) parts.push(`\n## 世界观模板\n${w.label} · ${w.subtitle}（${w.desc}）`);
+ } else if (worldTemplate) {
+  const w = findWorld(worldTemplate);
+  if (w) {
+    const bits = [`${w.label}${w.subtitle ? ' · ' + w.subtitle : ''}（${w.desc}）`];
+    if (w.flavor) bits.push(w.flavor);
+    parts.push(`\n## 世界观模板\n${bits.join('\n')}`);
   }
+}
 
   // based 模式：角色卡 + 世界书
   if (mode === 'based') {

@@ -378,7 +378,7 @@ function renderBody() {
 
   const world = findWorld(state.config.worldTemplate);
   body.innerHTML = activeBlocks.map((b, idx) => {
-    const hint = b.id === 'nsfw' ? NSFW_BLOCK.hint : (world?.blockHints?.[b.id] || '');
+    const hint = b.id === 'nsfw' ? NSFW_BLOCK.hint : (world?.blockHints?.[b.id] || b.hint || '');
     return `
       <article class="glass persona-block${b.id === 'nsfw' ? ' persona-block-nsfw' : ''}" data-block="${b.id}" style="--persona-block-idx:${idx}">
         <header class="persona-block-header">

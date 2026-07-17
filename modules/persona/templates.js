@@ -6,6 +6,7 @@ export const WORLD_TEMPLATES = [
     emoji: '🎐',
     subtitle: '大道争锋 / 仙魔虐恋',
     desc: '比传统修仙更戏剧化，注重"道心"与"执念"',
+    flavor: '这是一个道法与人心相互撕扯的世界。修仙者以证道为名，行的却是各自的执念。给出的人设应有"道心"与"心魔"的双重张力，让"修行"本身成为剧情钩子。',
     blockHints: {
       anchor:     '姓名 / 性别 / 年龄（骨龄）/ 外貌 / 感官特征（如：本命剑的剑气温度、灵力运转时的异香）',
       trajectory: '社会身份（散修 / 鼎炉 / 名门首徒等）/ 灵根与境界 / 核心成长经历（如：道心破碎的往事、被灭宗的阴影）',
@@ -21,6 +22,7 @@ export const WORLD_TEMPLATES = [
     emoji: '🏙️',
     subtitle: '都市暗流 / 破镜重圆',
     desc: '现代职场 / 刑侦 / 黑帮 / 校园或日常高反差',
+    flavor: '现代舞台上的高反差是核心。表面身份与暗面身份的落差、日常生活里的裂缝、创伤与欲望的角力，都是让人设立起来的关键。',
     blockHints: {
       anchor:     '姓名 / 性别 / 年龄 / 外貌 / 感官特征（常用的香水味、指尖的烟草味或医用酒精味）',
       trajectory: '表面职业与阶层 / 核心成长经历（原生家庭创伤、某个改变一生的雨夜）',
@@ -36,6 +38,7 @@ export const WORLD_TEMPLATES = [
     emoji: '⚔️',
     subtitle: '快意恩仇 / 刀光剑影',
     desc: '聚焦"江湖规矩"、"恩怨情仇"和"身不由己"',
+    flavor: '江湖不是背景，是规则。恩怨、名声、门派立场都可能成为人设"想却不能"的枷锁，让选择本身有代价。',
     blockHints: {
       anchor:     '姓名（及江湖绰号）/ 性别 / 年龄 / 外貌 / 感官特征（身上洗不净的血腥味、佩刀出鞘的轻吟）',
       trajectory: '门派所属与地位（黑 / 白道）/ 核心成长经历（如：师门背叛、一本武功秘籍引发的灭门）',
@@ -51,6 +54,7 @@ export const WORLD_TEMPLATES = [
     emoji: '📜',
     subtitle: '深宫朝堂 / 步步为营',
     desc: '核心在于"信息差"、"伪装"与"利益交换"',
+    flavor: '在这里，人设的每一句话都是有代价的。伪装、算计、把柄、身份的层层嵌套，比真情本身更能撑起戏剧张力。',
     blockHints: {
       anchor:     '姓名（字 / 号）/ 性别 / 年龄 / 外貌（常服与朝服的差异）/ 感官特征（熏香、把玩玉扳指的脆响）',
       trajectory: '官职 / 爵位 / 后宫位分 / 阵营阶层 / 核心成长经历（如：狸猫换太子的真相、家族流放的惨剧）',
@@ -66,6 +70,7 @@ export const WORLD_TEMPLATES = [
     emoji: '🔮',
     subtitle: '剑与魔法 / 史诗冒险',
     desc: '融合种族特性、阵营九宫格与神明信仰',
+    flavor: '种族、阵营、信仰构成人设的先天底色。非人特质与文明规范之间的张力，或宿命与自由意志的角力，往往是好故事的入口。',
     blockHints: {
       anchor:     '姓名 / 种族（精灵 / 魔族 / 半兽人等）/ 性别 / 年龄 / 外貌 / 感官特征（如：瞳孔在暗处会发光、非人类的体温、魔法元素的共鸣）',
       trajectory: '职业（法师 / 游荡者 / 圣骑士等）/ 信仰与阵营（如：混乱善良）/ 核心成长经历（如：被神明抛弃的信徒、逃亡的堕精灵）',
@@ -81,25 +86,19 @@ export const WORLD_TEMPLATES = [
     emoji: '✨',
     subtitle: '',
     desc: '你自己上传世界观',
-    blockHints: {
-      anchor:     '姓名 / 性别 / 年龄 / 外貌 / 感官特征',
-      trajectory: '身份地位 / 核心成长经历',
-      soul:       '核心性格 / 内在矛盾',
-      behavior:   '说话语气 / 口癖 / 习惯动作',
-      bond:       '与目标角色的核心关系',
-      trump:      '核心能力 / 致命弱点 / 不为人知的秘密',
-    },
+    flavor: '',   // 自定义世界观由用户在设置里描述
+    blockHints: null,   // 没有特化 hint，走通用 BLOCKS.hint
   },
 ];
 
-// 六大标准区块（所有模板通用，顺序固定）
+// 六大标准区块。hint 是通用提示，跨世界观都通用，UI 里也显示这个。
 export const BLOCKS = [
-  { id: 'anchor',     label: '基础锚点' },
-  { id: 'trajectory', label: '命运轨迹' },
-  { id: 'soul',       label: '灵魂侧写' },
-  { id: 'behavior',   label: '行为图鉴' },
-  { id: 'bond',       label: '羁绊与锁链' },
-  { id: 'trump',      label: '隐藏底牌' },
+  { id: 'anchor',     label: '基础锚点',       hint: '姓名 / 性别 / 年龄 / 外貌 / 感官特征（气味、声音、体温等能被感知到的细节）' },
+  { id: 'trajectory', label: '命运轨迹',       hint: '身份地位与阶层 / 核心成长经历（塑造 ta 的关键事件、旧伤、执念之源）' },
+  { id: 'soul',       label: '灵魂侧写',       hint: '核心性格 / 内在矛盾（表里不一之处、自相冲突的信念）' },
+  { id: 'behavior',   label: '行为图鉴',       hint: '说话语气 / 口癖 / 习惯动作（在不同情境下的外显特征）' },
+  { id: 'bond',       label: '羁绊与锁链',     hint: '与目标角色的核心关系模式（因果、张力、命运纠缠的切入点）' },
+  { id: 'trump',      label: '隐藏底牌',       hint: '核心能力 / 致命弱点 / 不为人知的秘密' },
 ];
 
 // NSFW 附加区块（仅开启 NSFW 时追加到末尾）
@@ -169,4 +168,5 @@ export function findWordCount(id)    { return WORD_COUNTS.find(x => x.id === id)
 export function findBlock(id)        { return BLOCKS.find(x => x.id === id); }
 export function findDirection(id)    { return DIRECTION_TAGS.find(x => x.id === id); }
 export function findOrientation(id)  { return ORIENTATION_TAGS.find(x => x.id === id); }
+
 
