@@ -604,3 +604,15 @@
   transform: translate(-50%, 0);
 }
 .persona-toast[hidden] { display: none; }
+.persona-block-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.persona-block-restore {
+  opacity: .85;
+}
+.persona-block-restore:hover {
+  opacity: 1;
+}
+

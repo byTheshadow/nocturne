@@ -2,6 +2,7 @@
 import {
   WORLD_TEMPLATES, WRITING_STYLES, WORD_COUNTS, BLOCKS, NSFW_BLOCK,
   RELATION_TAGS, DIRECTION_TAGS, ORIENTATION_TAGS,
+  USER_GENDERS, TP_POSITIONS, AC_POSITIONS, LOVE_TYPES, POSITION_USER_NOTE,
   findBlock, findWorld,
 } from './templates.js';
 import {
@@ -26,6 +27,13 @@ const state = {
     orientationTag: '',
     directionTag: '',
     relationTags: [],
+    // ── 角色定位（v0.5 新增）
+    userGender: '',
+    customUserGender: '',
+    tpPosition: '',
+    acPosition: '',
+    loveType: '',
+    otherPosition: '',
     extraRequest: '',
   },
   candidates: [],
@@ -51,6 +59,10 @@ function bootstrap() {
   renderWorldGrid();
   renderChips();
   renderRelationCloud();
+
+  const noteEl = document.querySelector('[data-slot="position-user-note"]');
+  if (noteEl) noteEl.textContent = POSITION_USER_NOTE;
+
   bindEvents();
 
   if (state.mode === 'based') showStage('notice');
@@ -95,6 +107,10 @@ function renderChips() {
   renderChipGroup('wordCount',      WORD_COUNTS);
   renderChipGroup('orientationTag', ORIENTATION_TAGS);
   renderChipGroup('directionTag',   DIRECTION_TAGS, { showDesc: true });
+  renderChipGroup('userGender',     USER_GENDERS);
+  renderChipGroup('tpPosition',     TP_POSITIONS,  { showDesc: true });
+  renderChipGroup('acPosition',     AC_POSITIONS);
+  renderChipGroup('loveType',       LOVE_TYPES);
   syncChipsSelection();
 }
 
@@ -137,6 +153,21 @@ function syncChipsSelection() {
   toggleSlot('nsfwCustom', state.config.nsfwMode === 'custom');
   const note = document.querySelector('[data-slot="nsfwNote"]');
   if (note) note.hidden = state.config.nsfwMode === 'off';
+
+  // 角色定位
+  markChip('userGender', state.config.userGender);
+  toggleSlot('customUserGender', state.config.userGender === 'custom');
+  markChip('tpPosition', state.config.tpPosition);
+  markChip('acPosition', state.config.acPosition);
+  markChip('loveType',   state.config.loveType);
+
+  // TP 定位仅在 GL 下显示；四爱/一爱仅在 BG / GB 下显示
+  const ori = state.config.orientationTag;
+  toggleSlot('tpPositionField', ori === 'gl');
+  toggleSlot('loveTypeField',   ori === 'bg' || ori === 'gb');
+  // 切换性向时如果不再适用就清掉旧选择，避免注入错误上下文
+  if (ori !== 'gl' && state.config.tpPosition) state.config.tpPosition = '';
+  if (ori !== 'bg' && ori !== 'gb' && state.config.loveType) state.config.loveType = '';
 }
 
 function markWorld(value) {
@@ -217,6 +248,7 @@ function onClick(e) {
     case 'retry':             onGenerate(); break;
     case 'switch-candidate':  switchCandidate(parseInt(btn.dataset.index, 10)); break;
     case 'reroll-block':      onRerollBlock(btn.dataset.block); break;
+    case 'restore-block':     onRestoreBlock(btn.dataset.block); break;
     case 'toggle-format':     toggleCopyFormat(); break;
     case 'add-relation-tag':  addCustomRelationTag(); break;
   }
@@ -234,6 +266,8 @@ function onInput(e) {
     customWordCount: 'customWordCount',
     nsfwCustom: 'nsfwCustom',
     extraRequest: 'extraRequest',
+    customUserGender: 'customUserGender',
+    otherPosition: 'otherPosition',
   };
   if (map[field]) state.config[map[field]] = value;
 }
@@ -262,12 +296,18 @@ function selectChip(field, value) {
     nsfwMode:       'nsfwMode',
     orientationTag: 'orientationTag',
     directionTag:   'directionTag',
+    userGender:     'userGender',
+    tpPosition:     'tpPosition',
+    acPosition:     'acPosition',
+    loveType:       'loveType',
   };
   const key = mapping[field];
   if (!key) return;
-  // 允许再次点击同一个 chip 取消（除了必选项）
-  const isOptional = field === 'orientationTag' || field === 'directionTag';
-  if (isOptional && state.config[key] === value) {
+  const optionalFields = new Set([
+    'orientationTag', 'directionTag',
+    'userGender', 'tpPosition', 'acPosition', 'loveType',
+  ]);
+  if (optionalFields.has(field) && state.config[key] === value) {
     state.config[key] = '';
   } else {
     state.config[key] = value;
@@ -387,9 +427,16 @@ function renderBody() {
             <h3 class="persona-block-title">${escapeHtml(b.label)}</h3>
             <p class="persona-block-hint">${escapeHtml(hint)}</p>
           </div>
-          <button class="btn-ghost persona-block-reroll" data-action="reroll-block" data-block="${b.id}">
-            <span aria-hidden="true">↻</span> 重 roll
-          </button>
+          <div class="persona-block-actions">
+            ${current.prevBlocks && current.prevBlocks[b.id] != null
+              ? `<button class="btn-ghost persona-block-restore" data-action="restore-block" data-block="${b.id}" title="切换到上一版">
+                   <span aria-hidden="true">↺</span> 上一版
+                 </button>`
+              : ''}
+            <button class="btn-ghost persona-block-reroll" data-action="reroll-block" data-block="${b.id}">
+              <span aria-hidden="true">↻</span> 重 roll
+            </button>
+          </div>
         </header>
         <div class="persona-block-content" contenteditable="true"
              data-block-content="${b.id}" spellcheck="false">${escapeHtml(current.blocks[b.id] || '')}</div>
@@ -441,18 +488,42 @@ async function onRerollBlock(blockId) {
     const newContent = await rerollBlock({
       blockId, currentBlocks: cur.blocks, config: state.config,
     });
+    // 保存上一版（仅保存一次，二次重 roll 会覆盖）
+    if (!cur.prevBlocks) cur.prevBlocks = {};
+    cur.prevBlocks[blockId] = cur.blocks[blockId] || '';
     cur.blocks[blockId] = newContent;
-    contentEl.innerText = newContent;
-    toast(`${label} 已重新生成`);
+    // 重画整个 body 让"上一版"按钮出现（同时保留其他块编辑态）
+    syncEditableBackToState();
+    renderBody();
+    toast(`${label} 已重新生成，可点"上一版"切回`);
   } catch (err) {
     contentEl.innerText = prev;
     toast(`重 roll 失败：${err.message}`);
   } finally {
-    contentEl.classList.remove('is-loading');
-    contentEl.setAttribute('contenteditable', 'true');
-    btn.disabled = false;
-    btn.innerHTML = prevBtnText;
+    // 若已重画 body，按钮引用可能已失效，防御性判断
+    if (document.body.contains(contentEl)) {
+      contentEl.classList.remove('is-loading');
+      contentEl.setAttribute('contenteditable', 'true');
+    }
+    if (document.body.contains(btn)) {
+      btn.disabled = false;
+      btn.innerHTML = prevBtnText;
+    }
   }
+}
+
+// ── 切回上一版（互换，可反复对比取舍） ───────────────────────
+function onRestoreBlock(blockId) {
+  syncEditableBackToState();
+  const cur = state.candidates[state.activeCandidateIndex];
+  if (!cur || !cur.prevBlocks || cur.prevBlocks[blockId] == null) return;
+  const current = cur.blocks[blockId] || '';
+  const previous = cur.prevBlocks[blockId] || '';
+  cur.blocks[blockId] = previous;
+  cur.prevBlocks[blockId] = current;   // 互换，让用户可以再切回来
+  renderBody();
+  const label = blockId === 'nsfw' ? NSFW_BLOCK.label : (findBlock(blockId)?.label || blockId);
+  toast(`${label} 已切换到另一版`);
 }
 
 // ── 复制 ────────────────────────────────────────────────────
@@ -518,3 +589,4 @@ function escapeHtml(s) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
 }
+

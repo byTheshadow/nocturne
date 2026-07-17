@@ -119,6 +119,47 @@
               </div>
             </div>
           </div>
+          
+                    <!-- 角色定位（v0.5 新增） -->
+          <div class="glass persona-section">
+            <div class="persona-section-head">
+              <h2 class="persona-section-title">角色定位</h2>
+              <span class="persona-optional-badge">辅助参数</span>
+            </div>
+            <p class="persona-hint" data-slot="position-user-note">
+              <!-- 由 JS 从 templates.POSITION_USER_NOTE 注入 -->
+            </p>
+
+            <div class="persona-field">
+              <label class="persona-label">用户性别</label>
+              <div class="persona-chips" data-field="userGender"></div>
+              <div class="persona-slot" data-slot="customUserGender" hidden>
+                <input type="text" class="persona-input" data-field="customUserGender" placeholder="自填性别标签">
+              </div>
+            </div>
+
+            <div class="persona-field" data-slot="tpPositionField" hidden>
+              <label class="persona-label">TP 定位（女同关系向）</label>
+              <div class="persona-chips" data-field="tpPosition"></div>
+            </div>
+
+            <div class="persona-field">
+              <label class="persona-label">攻受定位</label>
+              <div class="persona-chips" data-field="acPosition"></div>
+            </div>
+
+            <div class="persona-field" data-slot="loveTypeField" hidden>
+              <label class="persona-label">四爱 / 一爱（异性关系向）</label>
+              <div class="persona-chips" data-field="loveType"></div>
+            </div>
+
+            <div class="persona-field">
+              <label class="persona-label">其他关系位</label>
+              <p class="persona-hint">如"哥 / 弟""主 / 从""师 / 徒"，可留空</p>
+              <input type="text" class="persona-input" data-field="otherPosition" placeholder="自由填写...">
+            </div>
+          </div>
+
 
           <!-- NSFW -->
           <div class="glass persona-section">
