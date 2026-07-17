@@ -152,7 +152,7 @@
               </div>
             </div>
 
-            <div class="persona-field" data-slot="tpPositionField" hidden>
+            <div class="persona-field" data-slot="tpPositionField">
               <label class="persona-label">用户的TP 定位（女同关系向）</label>
               <div class="persona-chips" data-field="tpPosition"></div>
             </div>
@@ -221,34 +221,32 @@
       </div>
     </section>
 
-       <!-- 阶段 C：生成中 -->
-   
-<section class="persona-stage" data-stage="generating" hidden>
-  <div class="bento-card tech-corners persona-loading-card">
-    <div class="persona-loading-orb" aria-hidden="true">
-      <div class="persona-orbit persona-orbit-1"></div>
-      <div class="persona-orbit persona-orbit-2"></div>
-      <div class="persona-orbit persona-orbit-3"></div>
-    </div>
+    <!-- 阶段 C：生成中 -->
+    <section class="persona-stage" data-stage="generating" hidden>
+      <div class="bento-card tech-corners persona-loading-card">
+        <div class="persona-loading-orb" aria-hidden="true">
+          <div class="persona-orbit persona-orbit-1"></div>
+          <div class="persona-orbit persona-orbit-2"></div>
+          <div class="persona-orbit persona-orbit-3"></div>
+        </div>
 
-    <p class="persona-loading-text">正在为你调制三段灵魂</p>
+        <p class="persona-loading-text">正在为你调制三段灵魂</p>
 
-    <div class="persona-loading-poetry" aria-hidden="true">
-      <span>正在收集散落的星辰与呼吸…</span>
-      <span>正在把心跳译成句子…</span>
-      <span>正在校准她/他与你相遇的角度…</span>
-      <span>快好了，最后一段月色调温中…</span>
-    </div>
+        <div class="persona-loading-poetry" aria-hidden="true">
+          <span>正在收集散落的星辰与呼吸…</span>
+          <span>正在把心跳译成句子…</span>
+          <span>正在校准她/他与你相遇的角度…</span>
+          <span>快好了，最后一段月色调温中…</span>
+        </div>
 
-    <div class="persona-loading-progress"></div>
-    <p class="persona-loading-status" data-slot="loading-status">0 / 3 完成</p>
+        <div class="persona-loading-progress"></div>
+        <p class="persona-loading-status" data-slot="loading-status">0 / 3 完成</p>
 
-    <div class="persona-loading-actions">
-      <button class="btn-ghost" data-action="cancel">取消</button>
-    </div>
-  </div>
-</section>
-
+        <div class="persona-loading-actions">
+          <button class="btn-ghost" data-action="cancel">取消</button>
+        </div>
+      </div>
+    </section>
 
     <!-- 阶段 D：结果 -->
     <section class="persona-stage" data-stage="result" hidden>
@@ -261,6 +259,32 @@
           <button class="btn-primary" data-action="copy-current">复制当前</button>
         </div>
       </div>
+
+      <!-- 快速调整面板（结果页内嵌） -->
+      <div class="bento-card tech-corners persona-quick-settings" data-slot="quick-settings">
+        <div class="persona-section-head">
+          <h2 class="persona-section-title" style="font-size: 0.95rem;">快速调整</h2>
+          <span class="persona-optional-badge">修改后需重新生成</span>
+        </div>
+        <div class="persona-quick-settings-grid">
+          <div class="persona-field">
+            <label class="persona-label font-mono">文风</label>
+            <div class="persona-chips" data-field="quickWritingStyle"></div>
+          </div>
+          <div class="persona-field">
+            <label class="persona-label font-mono">用户性别</label>
+            <div class="persona-chips" data-field="quickUserGender"></div>
+          </div>
+          <div class="persona-field">
+            <label class="persona-label">附加要求</label>
+            <textarea class="persona-textarea" data-field="quickExtraRequest" rows="3" placeholder="追加或修改要求..."></textarea>
+          </div>
+        </div>
+        <div style="margin-top: 12px; text-align: right;">
+          <button class="btn-primary" data-action="quick-regenerate" style="font-size: 0.85rem;">应用并重新生成</button>
+        </div>
+      </div>
+
       <div class="persona-result-body" data-slot="candidate-body"></div>
     </section>
 
@@ -275,6 +299,17 @@
         </div>
       </div>
     </section>
+
+    <!-- 确认弹窗 -->
+    <div class="persona-modal-overlay" data-slot="confirm-modal" hidden>
+      <div class="bento-card tech-corners persona-modal">
+        <p class="persona-modal-message">是否回到主设置界面重新修改设置？当前生成的人设将不被保存。</p>
+        <div class="persona-modal-actions">
+          <button class="btn-ghost" data-action="modal-cancel">取消</button>
+          <button class="btn-primary" data-action="modal-confirm">确认返回</button>
+        </div>
+      </div>
+    </div>
 
     <div class="persona-toast" data-slot="toast" hidden></div>
   </main>
@@ -340,4 +375,3 @@
   </script>
 </body>
 </html>
-

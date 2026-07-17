@@ -83,7 +83,7 @@ function updateModeUI() {
   document.querySelectorAll('.persona-based-only').forEach(el => { el.hidden = !isBased; });
   const modeLabel = document.querySelector('[data-slot="mode-label"]');
   const pageSub   = document.querySelector('[data-slot="page-subtitle"]');
-  if (modeLabel) modeLabel.textContent = isBased ? '♪ 02 · 基于 char 设定' : '♪ 01 · 从零开始';
+    if (modeLabel) modeLabel.textContent = isBased ? '♪ 02 · 基于 char 设定' : '♪ 01 · 从零开始';
   if (pageSub)   pageSub.textContent   = isBased
     ? '上传目标角色卡，AI 帮你写一个能和 ta 玩起来的用户人设'
     : '按模板与要求，AI 从空白页写出三份候选人设';
@@ -130,7 +130,6 @@ function renderChipGroup(field, items, opts = {}) {
 function renderRelationCloud() {
   const cloud = document.querySelector('.persona-tag-cloud[data-field="relationTags"]');
   if (!cloud) return;
-  // 预设 + 已自定义合并去重
   const merged = Array.from(new Set([...RELATION_TAGS, ...state.config.relationTags]));
   cloud.innerHTML = merged.map(tag => {
     const active = state.config.relationTags.includes(tag) ? ' is-active' : '';
@@ -161,11 +160,15 @@ function syncChipsSelection() {
   markChip('acPosition', state.config.acPosition);
   markChip('loveType',   state.config.loveType);
 
-  // TP 定位仅在 GL 下显示；四爱/一爱仅在 BG / GB 下显示
+  // 【问题4修复】TP 定位在 GL 下显示；四爱/一爱在 BG / GB 下显示
+  // 同时当用户性别为 female 时也显示 TP（兼容从零开始模式）
   const ori = state.config.orientationTag;
+  const gender = state.config.userGender;
+  const showTp = ori === 'gl' || (gender === 'female' && ori === 'gl');
   toggleSlot('tpPositionField', ori === 'gl');
   toggleSlot('loveTypeField',   ori === 'bg' || ori === 'gb');
-  // 切换性向时如果不再适用就清掉旧选择，避免注入错误上下文
+
+  // 切换性向时如果不再适用就清掉旧选择
   if (ori !== 'gl' && state.config.tpPosition) state.config.tpPosition = '';
   if (ori !== 'bg' && ori !== 'gb' && state.config.loveType) state.config.loveType = '';
 }
@@ -224,12 +227,22 @@ function onClick(e) {
     return;
   }
 
-  // 通用 chip
+  // 通用 chip（包括快速设置面板的 chips）
   const chip = e.target.closest('.persona-chip');
   if (chip) {
     const group = chip.closest('.persona-chips');
     if (group) {
-      selectChip(group.dataset.field, chip.dataset.value);
+      const field = group.dataset.field;
+      // 快速设置面板的 chips 映射回主 config
+      if (field === 'quickWritingStyle') {
+        selectChip('writingStyle', chip.dataset.value);
+        syncQuickSettings();
+      } else if (field === 'quickUserGender') {
+        selectChip('userGender', chip.dataset.value);
+        syncQuickSettings();
+      } else {
+        selectChip(field, chip.dataset.value);
+      }
       return;
     }
   }
@@ -239,18 +252,22 @@ function onClick(e) {
   if (!btn) return;
   const action = btn.dataset.action;
   switch (action) {
-    case 'notice-confirm':    showStage('setup'); break;
-    case 'generate':          onGenerate(); break;
-    case 'cancel':            onCancel(); break;
-    case 'back-setup':        showStage('setup'); break;
-    case 'reroll-all':        onGenerate(); break;
-    case 'copy-current':      onCopyCurrent(); break;
-    case 'retry':             onGenerate(); break;
-    case 'switch-candidate':  switchCandidate(parseInt(btn.dataset.index, 10)); break;
-    case 'reroll-block':      onRerollBlock(btn.dataset.block); break;
-    case 'restore-block':     onRestoreBlock(btn.dataset.block); break;
-    case 'toggle-format':     toggleCopyFormat(); break;
-    case 'add-relation-tag':  addCustomRelationTag(); break;
+    case 'notice-confirm':      showStage('setup'); break;
+    case 'generate':            onGenerate(); break;
+    case 'cancel':              onCancel(); break;
+    case 'back-setup':          onBackSetup(); break;  // 【问题2】改为弹窗确认
+    case 'reroll-all':          onGenerate(); break;
+    case 'copy-current':        onCopyCurrent(); break;
+    case 'retry':               onGenerate(); break;
+    case 'switch-candidate':    switchCandidate(parseInt(btn.dataset.index, 10)); break;
+    case 'reroll-block':        onRerollBlock(btn.dataset.block); break;
+    case 'prev-version':        onPrevVersion(btn.dataset.block); break;   // 【问题1】上一版
+    case 'next-version':        onNextVersion(btn.dataset.block); break;   // 【问题1】下一版
+    case 'toggle-format':       toggleCopyFormat(); break;
+    case 'add-relation-tag':    addCustomRelationTag(); break;
+    case 'quick-regenerate':    onQuickRegenerate(); break;  // 【问题2】快速调整后重新生成
+    case 'modal-confirm':       confirmBackSetup(); break;   // 【问题2】弹窗确认
+    case 'modal-cancel':        hideModal(); break;          // 【问题2】弹窗取消
   }
 }
 
@@ -268,6 +285,7 @@ function onInput(e) {
     extraRequest: 'extraRequest',
     customUserGender: 'customUserGender',
     otherPosition: 'otherPosition',
+    quickExtraRequest: 'extraRequest',  // 快速调整的附加要求同步到主 config
   };
   if (map[field]) state.config[map[field]] = value;
 }
@@ -315,6 +333,81 @@ function selectChip(field, value) {
   syncChipsSelection();
 }
 
+// ── 【问题2】弹窗确认返回设置 ─────────────────────────────────
+function onBackSetup() {
+  // 如果当前在结果页，弹窗确认
+  const resultStage = document.querySelector('[data-stage="result"]');
+  if (resultStage && !resultStage.hidden) {
+    showModal();
+  } else {
+    showStage('setup');
+  }
+}
+
+function showModal() {
+  const modal = document.querySelector('[data-slot="confirm-modal"]');
+  if (modal) modal.hidden = false;
+}
+
+function hideModal() {
+  const modal = document.querySelector('[data-slot="confirm-modal"]');
+  if (modal) modal.hidden = true;
+}
+
+function confirmBackSetup() {
+  hideModal();
+  showStage('setup');
+}
+
+// ── 【问题2】快速调整面板 ─────────────────────────────────────
+function renderQuickSettings() {
+  // 渲染快速面板的 chips
+  const wsContainer = document.querySelector('.persona-chips[data-field="quickWritingStyle"]');
+  if (wsContainer) {
+    wsContainer.innerHTML = WRITING_STYLES.map(item => {
+      const active = item.id === state.config.writingStyleId ? ' is-active' : '';
+      return `<button type="button" class="persona-chip${active}" data-value="${item.id}">
+        <span class="persona-chip-label">${escapeHtml(item.label)}</span>
+      </button>`;
+    }).join('');
+  }
+
+  const ugContainer = document.querySelector('.persona-chips[data-field="quickUserGender"]');
+  if (ugContainer) {
+    ugContainer.innerHTML = USER_GENDERS.map(item => {
+      const active = item.id === state.config.userGender ? ' is-active' : '';
+      return `<button type="button" class="persona-chip${active}" data-value="${item.id}">
+        <span class="persona-chip-label">${escapeHtml(item.label)}</span>
+      </button>`;
+    }).join('');
+  }
+
+  // 同步附加要求文本
+  const extraEl = document.querySelector('[data-field="quickExtraRequest"]');
+  if (extraEl) extraEl.value = state.config.extraRequest || '';
+}
+
+function syncQuickSettings() {
+  // 同步快速面板的选中状态
+  const wsContainer = document.querySelector('.persona-chips[data-field="quickWritingStyle"]');
+  if (wsContainer) {
+    wsContainer.querySelectorAll('.persona-chip').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.value === state.config.writingStyleId);
+    });
+  }
+  const ugContainer = document.querySelector('.persona-chips[data-field="quickUserGender"]');
+  if (ugContainer) {
+    ugContainer.querySelectorAll('.persona-chip').forEach(btn => {
+      btn.classList.toggle('is-active', btn.dataset.value === state.config.userGender);
+    });
+  }
+}
+
+function onQuickRegenerate() {
+  // 应用快速面板修改后重新生成
+  onGenerate();
+}
+
 // ── 生成 ─────────────────────────────────────────────────────
 async function onGenerate() {
   const err = validateConfig();
@@ -344,15 +437,25 @@ async function onGenerate() {
     return;
   }
 
+  // 【问题1】每个 candidate 的每个 block 使用版本历史数组
   state.candidates = results.map(r => r.ok
-    ? { raw: r.raw, blocks: r.blocks, failed: false }
-    : { raw: '', blocks: emptyBlocks(), failed: true, err: r.err?.message || '生成失败' }
+    ? { raw: r.raw, blocks: r.blocks, failed: false, history: initHistory(r.blocks) }
+    : { raw: '', blocks: emptyBlocks(), failed: true, err: r.err?.message || '生成失败', history: {} }
   );
   state.activeCandidateIndex = state.candidates.findIndex(c => !c.failed);
   if (state.activeCandidateIndex < 0) state.activeCandidateIndex = 0;
 
   renderResult();
   showStage('result');
+}
+
+// 【问题1】初始化历史：每个 block 有一个版本数组和当前索引
+function initHistory(blocks) {
+  const history = {};
+  for (const key of Object.keys(blocks)) {
+    history[key] = { versions: [blocks[key]], currentIndex: 0 };
+  }
+  return history;
 }
 
 function onCancel() {
@@ -385,6 +488,7 @@ function validateConfig() {
 function renderResult() {
   renderTabs();
   renderBody();
+  renderQuickSettings();
   updateFormatButton();
 }
 
@@ -419,6 +523,14 @@ function renderBody() {
   const world = findWorld(state.config.worldTemplate);
   body.innerHTML = activeBlocks.map((b, idx) => {
     const hint = b.id === 'nsfw' ? NSFW_BLOCK.hint : (world?.blockHints?.[b.id] || b.hint || '');
+
+    // 【问题1】获取版本信息
+    const hist = current.history?.[b.id];
+    const versionCount = hist ? hist.versions.length : 1;
+    const versionIndex = hist ? hist.currentIndex : 0;
+    const hasPrev = versionIndex > 0;
+    const hasNext = versionIndex < versionCount - 1;
+
     return `
       <article class="glass persona-block${b.id === 'nsfw' ? ' persona-block-nsfw' : ''}" data-block="${b.id}" style="--persona-block-idx:${idx}">
         <header class="persona-block-header">
@@ -428,11 +540,15 @@ function renderBody() {
             <p class="persona-block-hint">${escapeHtml(hint)}</p>
           </div>
           <div class="persona-block-actions">
-            ${current.prevBlocks && current.prevBlocks[b.id] != null
-              ? `<button class="btn-ghost persona-block-restore" data-action="restore-block" data-block="${b.id}" title="切换到上一版">
-                   <span aria-hidden="true">↺</span> 上一版
-                 </button>`
-              : ''}
+            ${versionCount > 1 ? `
+              <span class="persona-version-info font-mono">${versionIndex + 1}/${versionCount}</span>
+              <button class="btn-ghost persona-block-nav" data-action="prev-version" data-block="${b.id}" ${hasPrev ? '' : 'disabled'} title="上一版">
+                <span aria-hidden="true">←</span> 上一版
+              </button>
+              <button class="btn-ghost persona-block-nav" data-action="next-version" data-block="${b.id}" ${hasNext ? '' : 'disabled'} title="下一版">
+                下一版 <span aria-hidden="true">→</span>
+              </button>
+            ` : ''}
             <button class="btn-ghost persona-block-reroll" data-action="reroll-block" data-block="${b.id}">
               <span aria-hidden="true">↻</span> 重 roll
             </button>
@@ -447,7 +563,8 @@ function renderBody() {
   body.querySelectorAll('[data-block-content]').forEach(el => {
     el.addEventListener('input', () => {
       const id = el.dataset.blockContent;
-      state.candidates[state.activeCandidateIndex].blocks[id] = el.innerText;
+      // 【问题3修复】使用 textContent 而非 innerText，避免浏览器注入 HTML
+      state.candidates[state.activeCandidateIndex].blocks[id] = el.textContent;
     });
   });
 }
@@ -463,11 +580,12 @@ function syncEditableBackToState() {
   const cur = state.candidates[state.activeCandidateIndex];
   if (!cur || cur.failed) return;
   document.querySelectorAll('[data-block-content]').forEach(el => {
-    cur.blocks[el.dataset.blockContent] = el.innerText;
+    // 【问题3修复】使用 textContent
+    cur.blocks[el.dataset.blockContent] = el.textContent;
   });
 }
 
-// ── 单块重 roll ─────────────────────────────────────────────
+// ── 【问题1】单块重 roll（使用版本历史数组）─────────────────────
 async function onRerollBlock(blockId) {
   syncEditableBackToState();
   const article = document.querySelector(`.persona-block[data-block="${blockId}"]`);
@@ -476,7 +594,7 @@ async function onRerollBlock(blockId) {
   if (!article || !contentEl || !btn) return;
 
   const label = blockId === 'nsfw' ? NSFW_BLOCK.label : (findBlock(blockId)?.label || blockId);
-  const prev = contentEl.innerText;
+  const prev = contentEl.textContent;
   contentEl.classList.add('is-loading');
   contentEl.setAttribute('contenteditable', 'false');
   btn.disabled = true;
@@ -488,19 +606,29 @@ async function onRerollBlock(blockId) {
     const newContent = await rerollBlock({
       blockId, currentBlocks: cur.blocks, config: state.config,
     });
-    // 保存上一版（仅保存一次，二次重 roll 会覆盖）
-    if (!cur.prevBlocks) cur.prevBlocks = {};
-    cur.prevBlocks[blockId] = cur.blocks[blockId] || '';
+
+    // 【问题1】将新版本追加到历史数组
+    if (!cur.history) cur.history = {};
+    if (!cur.history[blockId]) {
+      cur.history[blockId] = { versions: [prev], currentIndex: 0 };
+    }
+    const hist = cur.history[blockId];
+    // 如果当前不在最后一个版本（用户回退后又重 roll），截断后续版本
+    if (hist.currentIndex < hist.versions.length - 1) {
+      hist.versions = hist.versions.slice(0, hist.currentIndex + 1);
+    }
+    hist.versions.push(newContent);
+    hist.currentIndex = hist.versions.length - 1;
+
     cur.blocks[blockId] = newContent;
-    // 重画整个 body 让"上一版"按钮出现（同时保留其他块编辑态）
+
     syncEditableBackToState();
     renderBody();
-    toast(`${label} 已重新生成，可点"上一版"切回`);
+    toast(`${label} 已重新生成（版本 ${hist.currentIndex + 1}/${hist.versions.length}），可切换历史版本`);
   } catch (err) {
-    contentEl.innerText = prev;
+    contentEl.textContent = prev;
     toast(`重 roll 失败：${err.message}`);
   } finally {
-    // 若已重画 body，按钮引用可能已失效，防御性判断
     if (document.body.contains(contentEl)) {
       contentEl.classList.remove('is-loading');
       contentEl.setAttribute('contenteditable', 'true');
@@ -512,21 +640,43 @@ async function onRerollBlock(blockId) {
   }
 }
 
-// ── 切回上一版（互换，可反复对比取舍） ───────────────────────
-function onRestoreBlock(blockId) {
+// ── 【问题1】切换到上一版 ────────────────────────────────────
+function onPrevVersion(blockId) {
   syncEditableBackToState();
   const cur = state.candidates[state.activeCandidateIndex];
-  if (!cur || !cur.prevBlocks || cur.prevBlocks[blockId] == null) return;
-  const current = cur.blocks[blockId] || '';
-  const previous = cur.prevBlocks[blockId] || '';
-  cur.blocks[blockId] = previous;
-  cur.prevBlocks[blockId] = current;   // 互换，让用户可以再切回来
+  if (!cur || !cur.history || !cur.history[blockId]) return;
+  const hist = cur.history[blockId];
+  if (hist.currentIndex <= 0) return;
+
+  // 保存当前编辑内容到当前版本槽
+  hist.versions[hist.currentIndex] = cur.blocks[blockId];
+
+  hist.currentIndex--;
+  cur.blocks[blockId] = hist.versions[hist.currentIndex];
   renderBody();
   const label = blockId === 'nsfw' ? NSFW_BLOCK.label : (findBlock(blockId)?.label || blockId);
-  toast(`${label} 已切换到另一版`);
+  toast(`${label} 切换到版本 ${hist.currentIndex + 1}/${hist.versions.length}`);
 }
 
-// ── 复制 ────────────────────────────────────────────────────
+// ── 【问题1】切换到下一版 ────────────────────────────────────
+function onNextVersion(blockId) {
+  syncEditableBackToState();
+  const cur = state.candidates[state.activeCandidateIndex];
+  if (!cur || !cur.history || !cur.history[blockId]) return;
+  const hist = cur.history[blockId];
+  if (hist.currentIndex >= hist.versions.length - 1) return;
+
+  // 保存当前编辑内容到当前版本槽
+  hist.versions[hist.currentIndex] = cur.blocks[blockId];
+
+  hist.currentIndex++;
+  cur.blocks[blockId] = hist.versions[hist.currentIndex];
+  renderBody();
+  const label = blockId === 'nsfw' ? NSFW_BLOCK.label : (findBlock(blockId)?.label || blockId);
+  toast(`${label} 切换到版本 ${hist.currentIndex + 1}/${hist.versions.length}`);
+}
+
+// ── 【问题3修复】复制 ────────────────────────────────────────
 async function onCopyCurrent() {
   syncEditableBackToState();
   const cur = state.candidates[state.activeCandidateIndex];
@@ -535,12 +685,31 @@ async function onCopyCurrent() {
   const text = state.copyFormat === 'xml'
     ? blocksToXml(cur.blocks, includeNsfw)
     : blocksToPlain(cur.blocks, includeNsfw);
+
   try {
     await navigator.clipboard.writeText(text);
     toast(`已复制（${state.copyFormat === 'xml' ? 'XML' : '纯文本'}）`);
   } catch {
-    toast('复制失败，请手动选中');
+    // fallback: 使用隐藏 textarea 进行复制
+    fallbackCopy(text);
   }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  ta.style.top = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    toast(`已复制（${state.copyFormat === 'xml' ? 'XML' : '纯文本'}）`);
+  } catch {
+    toast('复制失败，请手动选中文本复制');
+  }
+  document.body.removeChild(ta);
 }
 
 function toggleCopyFormat() {

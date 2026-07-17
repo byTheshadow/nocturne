@@ -1046,4 +1046,73 @@
 .persona-block-restore:hover {
   opacity: 1;
 }
+/* ── 确认弹窗 ────────────────────────────────────────────── */
+.persona-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+.persona-modal-overlay[hidden] {
+  display: none;
+}
+.persona-modal {
+  max-width: 420px;
+  width: 90%;
+  padding: 28px 24px;
+  text-align: center;
+}
+.persona-modal-message {
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-main);
+}
+.persona-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ── 快速调整面板 ─────────────────────────────────────────── */
+.persona-quick-settings {
+  margin-top: 12px;
+  padding: 20px 24px;
+}
+.persona-quick-settings-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+.persona-quick-settings-grid .persona-chips {
+  flex-wrap: wrap;
+}
+.persona-quick-settings-grid .persona-textarea {
+  min-height: 60px;
+}
+
+/* ── 版本切换按钮 ─────────────────────────────────────────── */
+.persona-version-info {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-right: 4px;
+}
+.persona-block-nav {
+  font-size: 0.78rem;
+  padding: 2px 8px;
+}
+.persona-block-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.persona-block-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 
