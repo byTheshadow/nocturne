@@ -1046,7 +1046,7 @@
 .persona-block-restore:hover {
   opacity: 1;
 }
-/* ── 确认弹窗 ────────────────────────────────────────────── */
+/* ============ 确认弹窗（返回设置确认） ============ */
 .persona-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1054,65 +1054,108 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  animation: persona-modal-fadein 0.2s ease;
 }
 .persona-modal-overlay[hidden] {
   display: none;
 }
+@keyframes persona-modal-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 .persona-modal {
-  max-width: 420px;
+  max-width: 440px;
   width: 90%;
-  padding: 28px 24px;
+  padding: 2.5rem 2rem 2rem;
+  border-radius: 20px;
   text-align: center;
+  position: relative;
+  animation: persona-modal-slidein 0.25s ease;
+}
+@keyframes persona-modal-slidein {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 .persona-modal-message {
-  margin-bottom: 20px;
+  margin-bottom: 1.6rem;
   font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--text-main);
+  line-height: 1.8;
+  color: var(--text);
+  letter-spacing: 0.02em;
 }
 .persona-modal-actions {
   display: flex;
-  gap: 12px;
+  gap: 1rem;
   justify-content: center;
 }
 
-/* ── 快速调整面板 ─────────────────────────────────────────── */
+/* ============ 快速调整面板（结果页内嵌） ============ */
 .persona-quick-settings {
-  margin-top: 12px;
-  padding: 20px 24px;
+  margin-top: 1rem;
+  padding: 1.5rem 1.6rem;
+  border-radius: 16px;
+}
+.persona-quick-settings .persona-section-head {
+  margin-bottom: 0.6rem;
+}
+.persona-quick-settings .persona-section-title {
+  font-size: 0.95rem;
 }
 .persona-quick-settings-grid {
   display: grid;
-  gap: 16px;
-  margin-top: 12px;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+.persona-quick-settings-grid .persona-field {
+  margin-top: 0;
 }
 .persona-quick-settings-grid .persona-chips {
   flex-wrap: wrap;
 }
 .persona-quick-settings-grid .persona-textarea {
-  min-height: 60px;
+  min-height: 56px;
+  resize: vertical;
 }
 
-/* ── 版本切换按钮 ─────────────────────────────────────────── */
-.persona-version-info {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  margin-right: 4px;
-}
-.persona-block-nav {
-  font-size: 0.78rem;
-  padding: 2px 8px;
-}
-.persona-block-nav:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
+/* ============ 版本切换导航（结果区块内） ============ */
 .persona-block-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
   flex-wrap: wrap;
+}
+.persona-version-info {
+  font-size: 0.72rem;
+  color: var(--text-faint, var(--text-dim));
+  padding: 0.2rem 0.5rem;
+  background: var(--glass-bg, rgba(255,255,255,0.03));
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+}
+.persona-block-nav {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: var(--glass-bg, rgba(255,255,255,0.03));
+  border: 1px solid var(--border, rgba(255,255,255,0.12));
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.persona-block-nav:hover:not(:disabled) {
+  border-color: var(--accent, #b02838);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+.persona-block-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
 }
 
