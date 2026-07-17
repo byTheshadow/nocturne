@@ -6,7 +6,7 @@
 <title>趣味测试 · Nocturne</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../assets/theme.css">
 <link rel="stylesheet" href="../../assets/base.css">
 <link rel="stylesheet" href="quiz.css">
@@ -15,33 +15,79 @@
 
 <div data-include="../../assets/partials/header.html" data-base="../../"></div>
 
-<main class="page">
+<!-- 呼吸光 + 飘动音符（仅此页） -->
+<div class="quiz-ambient" aria-hidden="true"></div>
+<div class="quiz-notes" aria-hidden="true">
+  <span class="quiz-note-float">♪</span>
+  <span class="quiz-note-float">♫</span>
+  <span class="quiz-note-float">♩</span>
+  <span class="quiz-note-float">♬</span>
+  <span class="quiz-note-float">♪</span>
+</div>
 
-  <header class="section-head">
+<main class="page quiz-landing">
+
+  <header class="section-head quiz-landing-head">
     <p class="section-eyebrow">Divination in Notes</p>
-    <h1 class="section-title">趣味测试</h1>
+    <h1 class="section-title quiz-landing-title">趣味测试</h1>
     <div class="hero-divider small"><span>♪</span></div>
     <p class="quiz-tagline">做几道题，帮你匹配合适的角色。</p>
   </header>
 
-  <section class="quiz-banks">
-    <article class="quiz-bank glass">
-      <div class="quiz-bank-note">♪</div>
-      <h2 class="quiz-bank-title">心动频率</h2>
-      <p class="quiz-bank-desc">20 道题，测出你的 THME 人格类型，并从卡库里推荐合适的角色。</p>
-      <a class="btn-primary" href="test.html?bank=role-test">开始测试</a>
+  <section class="quiz-playlist">
+
+    <article class="album-track glass">
+      <div class="track-info">
+        <span class="track-number">Track 01</span>
+        <h2 class="track-title">
+          心动频率
+          <span class="track-title-en">BPM</span>
+        </h2>
+        <p class="track-desc">
+          20 道题，测出你的 THME 人格类型，并从卡库里推荐合适的角色。
+        </p>
+
+        <div class="track-cta">
+          <a class="btn-play" href="test.html?bank=role-test">
+            <span class="btn-play-icon" aria-hidden="true">▶</span>
+            <span>Play test</span>
+          </a>
+          <div class="waveform" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+      <div class="vinyl-record" aria-hidden="true"></div>
     </article>
 
-    <article class="quiz-bank glass">
-  <div class="quiz-bank-note">♫</div>
-  <h2 class="quiz-bank-title">AI-RP 灵魂画像</h2>
-  <p class="quiz-bank-desc">30 道题，画出你在虚拟关系里的偏好轮廓。</p>
-  <a class="btn-primary" href="test.html?bank=persona-test">开始测试</a>
-</article>
+    <article class="album-track glass">
+      <div class="track-info">
+        <span class="track-number">Track 02</span>
+        <h2 class="track-title">
+          AI-RP 灵魂画像
+          <span class="track-title-en">ECHO</span>
+        </h2>
+        <p class="track-desc">
+          30 道题，画出你在虚拟关系里的偏好轮廓。
+        </p>
 
+        <div class="track-cta">
+          <a class="btn-play" href="test.html?bank=persona-test">
+            <span class="btn-play-icon" aria-hidden="true">▶</span>
+            <span>Play test</span>
+          </a>
+          <div class="waveform" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+      <div class="vinyl-record vinyl-record--alt" aria-hidden="true"></div>
+    </article>
+
+  </section>
 
   <p class="quiz-footnote">
-    这个模块不需要 API，全部在本地计算。题库文件放在 <code>data/quiz-banks/</code>，之后会陆续添加。
+    这个模块不需要 API，全部在本地计算。
   </p>
 
 </main>
@@ -53,4 +99,5 @@
 
 </body>
 </html>
+
 

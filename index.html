@@ -7,80 +7,722 @@
 <meta name="description" content="角色扮演辅助工具站，一切都在浏览器里进行。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/theme.css">
 <link rel="stylesheet" href="assets/base.css">
+<style>
+  /* ============================================================
+     index.html · 磁带主界面（仅本页作用域，不影响其他模块）
+     ============================================================ */
+
+  /* index 专属：磁带元件配色（跟随主题变量派生） */
+  :root,
+  :root[data-theme="nocturne"] {
+    --home-cassette-body:   #131319;
+    --home-cassette-label:  #0d0c12;
+    --home-cassette-window: #050507;
+    --home-cassette-reel:   #2a2830;
+    --home-track-bg:        rgba(18, 16, 22, 0.55);
+    --home-flashlight:      rgba(176, 40, 56, 0.14);
+    --home-noise-blend:     overlay;
+    --home-noise-opacity:   0.22;
+  }
+  :root[data-theme="aria"] {
+    --home-cassette-body:   #e6e6e2;
+    --home-cassette-label:  #f2f2ee;
+    --home-cassette-window: #c8c8c4;
+    --home-cassette-reel:   #9a9aa2;
+    --home-track-bg:        rgba(255, 255, 255, 0.55);
+    --home-flashlight:      rgba(107, 118, 132, 0.18);
+    --home-noise-blend:     multiply;
+    --home-noise-opacity:   0.08;
+  }
+
+  /* 全局噪点层，只在首页启用 */
+  body.home::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 4;
+    opacity: var(--home-noise-opacity);
+    mix-blend-mode: var(--home-noise-blend);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ============ 磁带舞台 ============ */
+  .home-stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0 48px;
+  }
+
+  .home-ambient {
+    position: absolute;
+    top: 45%; left: 50%;
+    width: 460px; height: 320px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
+    animation: home-breathe 4.5s infinite alternate ease-in-out;
+    z-index: 0;
+    pointer-events: none;
+  }
+  @keyframes home-breathe {
+    0%   { transform: translate(-50%, -50%) scale(0.9); opacity: 0.45; }
+    100% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  }
+
+  .home-cassette {
+    position: relative;
+    width: min(420px, 92vw);
+    height: 260px;
+    background: var(--home-cassette-body);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow:
+      0 32px 64px -20px rgba(0, 0, 0, 0.65),
+      inset 0 2px 0 rgba(255, 255, 255, 0.04),
+      inset 0 -20px 40px rgba(0, 0, 0, 0.25);
+    padding: 22px;
+    z-index: 1;
+  }
+
+  .home-cassette-label {
+    width: 100%; height: 100%;
+    background: var(--home-cassette-label);
+    border-radius: 10px;
+    border: 1px solid var(--border-faint);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-label-strip {
+    position: absolute;
+    top: 22px; left: 0; right: 0;
+    text-align: center;
+    border-top: 1px solid var(--border-faint);
+    border-bottom: 1px solid var(--border-faint);
+    padding: 5px 0;
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .home-cassette-window {
+    width: min(280px, 78%); height: 92px;
+    background: var(--home-cassette-window);
+    border-radius: 46px;
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 22px;
+    position: relative;
+    box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.7);
+    margin-top: 10px;
+  }
+
+  .home-reel {
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: var(--home-cassette-reel);
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    animation: home-spin 5s linear infinite;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.4);
+  }
+  .home-reel::before {
+    content: '';
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--home-cassette-window);
+    border: 2px solid var(--home-cassette-body);
+  }
+  .home-reel-holes {
+    position: absolute;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    border: 4px dashed var(--home-cassette-window);
+  }
+  @keyframes home-spin { to { transform: rotate(360deg); } }
+
+  .home-tape-line {
+    position: absolute;
+    top: 50%; left: 52px; right: 52px;
+    height: 3px;
+    background: var(--accent);
+    transform: translateY(-50%);
+    z-index: -1;
+    box-shadow: 0 0 6px var(--accent-glow);
+  }
+
+  .home-cassette-bottom {
+    position: absolute;
+    bottom: -1px;
+    left: 50%; transform: translateX(-50%);
+    width: 68%; height: 22px;
+    background: var(--home-cassette-body);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+  }
+
+  .home-album-title {
+    font-family: 'Cinzel', 'Noto Serif SC', serif;
+    font-weight: 500;
+    font-size: clamp(48px, 8vw, 84px);
+    letter-spacing: 0.06em;
+    margin: 28px 0 6px;
+    color: var(--text);
+    text-align: center;
+    text-shadow: 0 0 40px var(--accent-glow);
+  }
+  .home-album-sub {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--text-dim);
+    text-align: center;
+    margin: 0 0 20px;
+  }
+
+  .home-api-status {
+    text-align: center;
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+    margin: 0 0 56px;
+  }
+  .home-api-status.is-ok { color: var(--success); }
+  .home-api-status a { color: var(--accent); }
+
+  /* ============ 曲目表 ============ */
+  .home-tracklist {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 8px 40px;
+    perspective: 1200px;
+  }
+
+  .home-tracklist:hover .home-track:not(:hover) {
+    filter: blur(3px);
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+
+  .home-track {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 26px;
+    margin-bottom: 14px;
+    background: var(--home-track-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid transparent;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .home-track::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle 160px at var(--x, 50%) var(--y, 50%),
+                var(--home-flashlight) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .home-track:hover::before { opacity: 1; }
+
+  .home-track:hover {
+    filter: blur(0);
+    opacity: 1;
+    transform: scale(1.03) translateZ(10px);
+    border-color: var(--accent);
+    border-left-color: var(--accent);
+    box-shadow:
+      0 24px 48px -18px rgba(0, 0, 0, 0.55),
+      inset 8px 0 24px var(--accent-glow);
+    z-index: 5;
+  }
+
+  .home-track > * { position: relative; z-index: 1; }
+
+  .home-track-left { display: flex; gap: 20px; align-items: center; }
+
+  .home-track-index {
+    width: 34px;
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-dim);
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+  .home-track:hover .home-track-index { color: var(--accent); }
+  .home-track:hover .home-track-index .num { display: none; }
+  .home-track:hover .home-track-index::before {
+    content: '▶';
+    color: var(--accent);
+  }
+  .home-track.is-locked:hover .home-track-index::before {
+    content: '■';
+    color: var(--text-faint);
+  }
+
+  .home-track-details { display: flex; flex-direction: column; gap: 6px; }
+
+  .home-track-meta {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+  }
+  .home-track:hover .home-track-meta { color: var(--accent); }
+
+  .home-track-title {
+    font-family: 'Cinzel', 'Noto Serif SC', serif;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: 0.04em;
+    margin: 0;
+    color: var(--text);
+    transition: text-shadow 0.3s;
+  }
+  .home-track:hover .home-track-title {
+    text-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .home-track-desc {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    max-width: 380px;
+    margin: 0;
+  }
+
+  .home-track-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .home-track-time {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+  }
+  .home-track:hover .home-track-time { color: var(--accent); font-weight: 500; }
+
+  .home-eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 18px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .home-track:hover .home-eq { opacity: 1; }
+  .home-track.is-locked:hover .home-eq { opacity: 0; }
+
+  .home-eq-bar {
+    width: 3px;
+    background: var(--accent);
+    border-radius: 1px;
+    animation: home-eq-bounce 0.9s infinite alternate ease-in-out;
+  }
+  .home-eq-bar:nth-child(1) { animation-delay: 0.05s; }
+  .home-eq-bar:nth-child(2) { animation-delay: 0.35s; }
+  .home-eq-bar:nth-child(3) { animation-delay: 0.15s; }
+  .home-eq-bar:nth-child(4) { animation-delay: 0.45s; }
+  .home-eq-bar:nth-child(5) { animation-delay: 0.25s; }
+  @keyframes home-eq-bounce {
+    from { height: 20%; }
+    to   { height: 100%; }
+  }
+
+  .home-track.is-locked { cursor: default; }
+  .home-track.is-locked .home-track-title {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--text-faint);
+    opacity: 0.65;
+  }
+  .home-track.is-locked:hover {
+    border-color: var(--border);
+    border-left-color: var(--text-faint);
+    box-shadow: none;
+    transform: none;
+  }
+
+  /* ============ 欢迎弹窗 ============ */
+  .home-welcome {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .home-welcome.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .home-welcome__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg) 65%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .home-welcome__card {
+    position: relative;
+    width: min(480px, 100%);
+    padding: 40px 36px 32px;
+    background: var(--glass-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow), var(--shadow-glow);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+    transform: translateY(20px) scale(0.96);
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .home-welcome.is-open .home-welcome__card {
+    transform: translateY(0) scale(1);
+  }
+
+  .home-welcome__close {
+    position: absolute;
+    top: 14px; right: 16px;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--text-dim);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .home-welcome__close:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .home-welcome__eyebrow {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin: 0 0 8px;
+    text-align: center;
+  }
+  .home-welcome__title {
+    font-family: 'Cinzel', 'Noto Serif SC', serif;
+    font-weight: 500;
+    font-size: 32px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    color: var(--text);
+    margin: 0 0 22px;
+  }
+  .home-welcome__body {
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 0 0 20px;
+    text-align: center;
+  }
+  .home-welcome__body strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .home-welcome__divider {
+    text-align: center;
+    color: var(--accent);
+    font-size: 14px;
+    letter-spacing: 0.4em;
+    margin: 22px 0 18px;
+    position: relative;
+  }
+  .home-welcome__divider::before,
+  .home-welcome__divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border-strong), transparent);
+  }
+  .home-welcome__divider::before { left: calc(50% - 90px); }
+  .home-welcome__divider::after  { right: calc(50% - 90px); }
+
+  .home-welcome__section {
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0 0 14px;
+  }
+  .home-welcome__links {
+    list-style: none;
+    margin: 0 0 26px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .home-welcome__links a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+    font-size: 15px;
+    transition: all 0.25s;
+  }
+  .home-welcome__links a::after {
+    content: '↗';
+    color: var(--text-faint);
+    font-size: 14px;
+    transition: transform 0.25s, color 0.25s;
+  }
+  .home-welcome__links a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .home-welcome__links a:hover::after {
+    color: var(--accent);
+    transform: translate(2px, -2px);
+  }
+
+  .home-welcome__ok {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Cinzel', 'Noto Serif SC', serif;
+    font-size: 13px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .home-welcome__ok:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 10px 28px -8px var(--accent-glow);
+  }
+
+  .home-welcome__made {
+    text-align: center;
+    font-family: 'JetBrains Mono', 'SF Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    margin: 18px 0 0;
+  }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 640px) {
+    .home-cassette { height: 220px; padding: 16px; }
+    .home-cassette-window { height: 76px; padding: 0 14px; }
+    .home-reel { width: 52px; height: 52px; }
+    .home-reel-holes { width: 40px; height: 40px; }
+    .home-track { padding: 16px 18px; }
+    .home-track-left { gap: 12px; }
+    .home-track-desc { font-size: 13.5px; }
+    .home-track-title { font-size: 17px; }
+    .home-welcome__card { padding: 32px 22px 24px; }
+    .home-welcome__title { font-size: 26px; }
+  }
+</style>
 </head>
-<body>
+<body class="home">
 
 <div data-include="assets/partials/header.html" data-base=""></div>
 
 <main class="page">
 
-  <section class="hero">
-    <div class="hero-clef" aria-hidden="true">
-      <svg viewBox="0 0 100 240" xmlns="http://www.w3.org/2000/svg">
-        <path d="M50 20 Q35 40 45 70 Q60 90 50 120 Q40 145 55 165 Q75 185 60 210 Q45 225 35 215" 
-              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-        <circle cx="45" cy="205" r="8" fill="currentColor"/>
-      </svg>
+  <!-- 磁带舞台 -->
+  <section class="home-stage">
+    <div class="home-ambient" aria-hidden="true"></div>
+
+    <div class="home-cassette" aria-hidden="true">
+      <div class="home-cassette-label">
+        <div class="home-label-strip">Side A · Local Data Only</div>
+        <div class="home-cassette-window">
+          <div class="home-reel"><div class="home-reel-holes"></div></div>
+          <div class="home-tape-line"></div>
+          <div class="home-reel"><div class="home-reel-holes"></div></div>
+        </div>
+      </div>
+      <div class="home-cassette-bottom"></div>
     </div>
-    <p class="hero-eyebrow">— A Roleplay Companion —</p>
-    <h1 class="hero-title">Nocturne</h1>
-    <p class="hero-subtitle">一整套角色扮演辅助工具，数据全部留在你的浏览器里。</p>
-    <div class="hero-divider"><span>♪</span></div>
-    <p id="apiStatus" class="hero-status">读取配置中…</p>
+
+    <h1 class="home-album-title">Nocturne</h1>
+    <p class="home-album-sub">— A Roleplay Companion —</p>
   </section>
 
-  <section class="modules">
-    <a class="module-card glass" href="modules/quiz/">
-      <div class="module-note">♪</div>
-      <h3 class="module-title">趣味测试</h3>
-      <p class="module-desc">做几道题，帮你找到合适的角色卡，或者生成一份你的用户画像。</p>
-      <span class="module-tag">无需 API</span>
+  <p id="apiStatus" class="home-api-status">读取配置中…</p>
+
+  <!-- 曲目表 -->
+  <section class="home-tracklist" aria-label="模块列表">
+
+    <a class="home-track" href="modules/quiz/">
+      <div class="home-track-left">
+        <div class="home-track-index"><span class="num">01</span></div>
+        <div class="home-track-details">
+          <span class="home-track-meta">Track 01 · No API</span>
+          <h3 class="home-track-title">趣味测试 · Personality</h3>
+          <p class="home-track-desc">做几道题，帮你找到合适的角色卡，或者生成一份你的用户画像。</p>
+        </div>
+      </div>
+      <div class="home-track-right">
+        <div class="home-eq" aria-hidden="true">
+          <div class="home-eq-bar"></div><div class="home-eq-bar"></div>
+          <div class="home-eq-bar"></div><div class="home-eq-bar"></div>
+          <div class="home-eq-bar"></div>
+        </div>
+        <span class="home-track-time">03:45</span>
+      </div>
     </a>
 
-    <a class="module-card glass" href="modules/persona/index.html">
-      <div class="module-note">♫</div>
-      <h3 class="module-title">人设生产</h3>
-      <p class="module-desc">上传原设和风格偏好，AI 会写几版人设给你挑。</p>
-      <span class="module-tag">需要 API</span>
+    <a class="home-track" href="modules/persona/index.html">
+      <div class="home-track-left">
+        <div class="home-track-index"><span class="num">02</span></div>
+        <div class="home-track-details">
+          <span class="home-track-meta">Track 02 · Req API</span>
+          <h3 class="home-track-title">人设生产 · Generation</h3>
+          <p class="home-track-desc">上传原设和风格偏好，AI 会写几版人设给你挑。</p>
+        </div>
+      </div>
+      <div class="home-track-right">
+        <div class="home-eq" aria-hidden="true">
+          <div class="home-eq-bar"></div><div class="home-eq-bar"></div>
+          <div class="home-eq-bar"></div><div class="home-eq-bar"></div>
+          <div class="home-eq-bar"></div>
+        </div>
+        <span class="home-track-time">05:12</span>
+      </div>
     </a>
 
-
-
-    <div class="module-card glass is-locked" aria-disabled="true">
-      <div class="module-note">♬</div>
-      <h3 class="module-title">相性卡</h3>
-      <p class="module-desc">给两个角色算相性，附上 paro / au 推荐和一张小纸条。</p>
-      <span class="module-tag">敬请期待</span>
+    <div class="home-track is-locked" aria-disabled="true">
+      <div class="home-track-left">
+        <div class="home-track-index"><span class="num">03</span></div>
+        <div class="home-track-details">
+          <span class="home-track-meta">Track 03 · Locked</span>
+          <h3 class="home-track-title">相性卡 · Compatibility</h3>
+          <p class="home-track-desc">给两个角色算相性，附上 paro / au 推荐和一张小纸条。</p>
+        </div>
+      </div>
+      <div class="home-track-right">
+        <span class="home-track-time">--:--</span>
+      </div>
     </div>
 
-    <div class="module-card glass is-locked" aria-disabled="true">
-      <div class="module-note">♭</div>
-      <h3 class="module-title">相亲角</h3>
-      <p class="module-desc">描述你想要的恋爱体验，AI 从卡库里给你介绍合适的人。</p>
-      <span class="module-tag">敬请期待</span>
+    <div class="home-track is-locked" aria-disabled="true">
+      <div class="home-track-left">
+        <div class="home-track-index"><span class="num">04</span></div>
+        <div class="home-track-details">
+          <span class="home-track-meta">Track 04 · Locked</span>
+          <h3 class="home-track-title">相亲角 · Matchmaking</h3>
+          <p class="home-track-desc">描述你想要的恋爱体验，AI 从卡库里给你介绍合适的人。</p>
+        </div>
+      </div>
+      <div class="home-track-right">
+        <span class="home-track-time">--:--</span>
+      </div>
     </div>
 
-    <div class="module-card glass is-locked" aria-disabled="true">
-      <div class="module-note">♩</div>
-      <h3 class="module-title">Repo 卡</h3>
-      <p class="module-desc">把一次角色扮演体验做成一张可收藏的图卡。</p>
-      <span class="module-tag">敬请期待</span>
+    <div class="home-track is-locked" aria-disabled="true">
+      <div class="home-track-left">
+        <div class="home-track-index"><span class="num">05</span></div>
+        <div class="home-track-details">
+          <span class="home-track-meta">Track 05 · Locked</span>
+          <h3 class="home-track-title">Repo 卡 · Memories</h3>
+          <p class="home-track-desc">把一次角色扮演体验做成一张可收藏的图卡。</p>
+        </div>
+      </div>
+      <div class="home-track-right">
+        <span class="home-track-time">--:--</span>
+      </div>
     </div>
+
   </section>
 
 </main>
 
 <div data-include="assets/partials/footer.html" data-base=""></div>
 
+<!-- 首次访问欢迎弹窗 -->
+<div class="home-welcome" id="homeWelcome" role="dialog" aria-modal="true" aria-labelledby="homeWelcomeTitle">
+  <div class="home-welcome__backdrop" data-welcome-close></div>
+  <div class="home-welcome__card">
+    <button class="home-welcome__close" type="button" data-welcome-close aria-label="关闭">×</button>
+    <p class="home-welcome__eyebrow">Welcome</p>
+    <h2 class="home-welcome__title" id="homeWelcomeTitle">Nocturne</h2>
+    <p class="home-welcome__body">
+      所有数据都保存在你的浏览器里，除了 <strong>API 配置</strong> 之外，不会保留任何历史记录。<br>
+      重要的结果记得存档
+    </p>
+    <div class="home-welcome__divider">♪ ♫ ♪</div>
+    <p class="home-welcome__section">Made by Shadow · 其他作品</p>
+    <ul class="home-welcome__links">
+      <li><a href="https://l-vos.netlify.app/" target="_blank" rel="noopener">听心图谱</a></li>
+      <li><a href="https://bytheshadow.github.io/webvb/#/home" target="_blank" rel="noopener">灵魂实验室</a></li>
+      <li><a href="https://bytheshadow.github.io/pet-app/#pet" target="_blank" rel="noopener">电子宠物</a></li>
+    </ul>
+    <button class="home-welcome__ok" type="button" data-welcome-close>Press Play</button>
+    <p class="home-welcome__made">© Shadow · Nocturne OS</p>
+  </div>
+</div>
+
 <script src="assets/include.js"></script>
+
 <script type="module">
   import { getConfig } from './assets/config.js';
   document.addEventListener('partials:ready', () => {
     const cfg = getConfig();
     const el = document.getElementById('apiStatus');
+    if (!el) return;
     if (cfg.baseUrl && cfg.apiKey && cfg.model) {
       el.innerHTML = `● 已连接 · <span class="mono">${cfg.model}</span>`;
       el.classList.add('is-ok');
@@ -88,6 +730,42 @@
       el.innerHTML = '○ 尚未配置 API · <a href="settings.html">前往设置</a>';
     }
   });
+</script>
+
+<script>
+  // 手电筒跟随
+  document.querySelectorAll('.home-track').forEach(track => {
+    track.addEventListener('mousemove', e => {
+      const rect = track.getBoundingClientRect();
+      track.style.setProperty('--x', `${e.clientX - rect.left}px`);
+      track.style.setProperty('--y', `${e.clientY - rect.top}px`);
+    });
+  });
+
+  // 首次访问欢迎弹窗
+  (function () {
+    const KEY = 'nocturne:welcome-seen';
+    const modal = document.getElementById('homeWelcome');
+    if (!modal) return;
+
+    const open  = () => { modal.classList.add('is-open'); document.body.style.overflow = 'hidden'; };
+    const close = () => {
+      modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+      try { localStorage.setItem(KEY, '1'); } catch (e) {}
+    };
+
+    let seen = false;
+    try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
+    if (!seen) setTimeout(open, 400);
+
+    modal.querySelectorAll('[data-welcome-close]').forEach(btn => {
+      btn.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+    });
+  })();
 </script>
 
 </body>
