@@ -22,26 +22,29 @@ export const ORIENTATION_TAGS = [
   { id: 'gb',      label: 'GB · 女主 × 男' },
   { id: 'neutral', label: '无性别偏好' },
 ];
-
 // ── TP 定位（GL 关系向 · 单选）──────────────────────────────
 export const TP_POSITIONS = [
-  { id: 't', label: 'T', desc: '关系里偏主动' },
-  { id: 'p', label: 'P', desc: '关系里偏被动' },
-  { id: 'h', label: 'H', desc: '不区分 T / P' },
+  { id: 'char-t-user-p', label: 'char T · user P', desc: 'char 偏主动，user 偏被动' },
+  { id: 'char-p-user-t', label: 'char P · user T', desc: 'char 偏被动，user 偏主动' },
+  { id: 'both-t',        label: '双 T',            desc: '双方都偏主动' },
+  { id: 'both-p',        label: '双 P',            desc: '双方都偏被动' },
+  { id: 'h',             label: 'H · 不区分',       desc: '不分 T / P' },
 ];
 
 // ── 攻受定位（单选）────────────────────────────────────────
 export const AC_POSITIONS = [
-  { id: 'top',     label: '攻' },
-  { id: 'bottom',  label: '受' },
-  { id: 'switch',  label: '互攻' },
-  { id: 'neutral', label: '不区分' },
+  { id: 'char-top',    label: 'char 攻 · user 受' },
+  { id: 'char-bottom', label: 'char 受 · user 攻' },
+  { id: 'switch',      label: '互攻 · 无固定' },
+  { id: 'neutral',     label: '不区分' },
 ];
 
 // ── 四爱 / 一爱（BG / GB · 单选）────────────────────────────
 export const LOVE_TYPES = [
-  { id: 'gb4', label: '四爱（GB · 女攻男受）' },
-  { id: 'bg1', label: '一爱（BG · 男攻女受）' },
+  { id: 'user-m-top', label: 'user 男攻 · char 女受（一爱）' },
+  { id: 'char-m-top', label: 'char 男攻 · user 女受（一爱）' },
+  { id: 'user-f-top', label: 'user 女攻 · char 男受（四爱）' },
+  { id: 'char-f-top', label: 'char 女攻 · user 男受（四爱）' },
 ];
 
 // ── 调用模式（重点：给用户解释清楚）──────────────────────────

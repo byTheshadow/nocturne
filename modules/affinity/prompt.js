@@ -37,7 +37,8 @@ function buildContextBlock(config) {
     if (l) meta.push(`异性向定位：${l.label}`);
   }
   if (meta.length) {
-    parts.push(`\n## 用户指定的关系参数（若与双方人设冲突，以人设本身为准，但必须在分析中体现张力）\n${meta.map(x => '- ' + x).join('\n')}`);
+    parts.push(`\n## 用户指定的关系参数（如与双方人设有明显冲突，请在分析中把冲突本身作为张力展开，而不是简单忽略任一方
+）\n${meta.map(x => '- ' + x).join('\n')}`);
   }
 
   if (config.extraRequest && config.extraRequest.trim()) {
