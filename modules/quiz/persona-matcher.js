@@ -4,6 +4,9 @@
  *
  * 判定规则：每维度 0-10 归一化整数，>=5 记 X2（高分方向），<5 记 X1（低分方向）。
  * 分享 code：类型组合 = C + A + G，例 "C1A2G1"（也可作为 URL 上的 r 值）。
+ *
+ * 兼容说明：结果库里的组合键允许 "-"、"_"、"" 三种分隔（AI 生成时容易写错），
+ *          matcher 会依次尝试匹配。
  */
 
 const DIMS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -38,6 +41,28 @@ function seedFromScores(scores) {
 }
 
 /**
+ * 组合键容错查表。给一组组件（如 ["C1","A2","G1"]），依次尝试各种分隔方式。
+ * 同时也扫一遍已有的 keys 做大小写不敏感 & 顺序无关的兜底。
+ */
+function pickByCombo(dict, parts) {
+  if (!dict) return null;
+
+  const seps = ['-', '_', '', '/'];
+  for (const sep of seps) {
+    const key = parts.join(sep);
+    if (dict[key] !== undefined) return dict[key];
+  }
+
+  // 兜底：把每个 key 拆成组件集合，看有没有和 parts 一样的（顺序无关，大小写不敏感）
+  const target = parts.map(s => s.toUpperCase()).sort().join('|');
+  for (const key of Object.keys(dict)) {
+    const comps = key.split(/[-_/\s]+/).filter(Boolean).map(s => s.toUpperCase()).sort().join('|');
+    if (comps === target) return dict[key];
+  }
+  return null;
+}
+
+/**
  * 从结果库里挑装出完整画像对象。
  * @param {{ code: string, flags: Record<string, string> }} codeInfo
  * @param {Record<string, number>} scores
@@ -45,11 +70,10 @@ function seedFromScores(scores) {
  */
 export function buildPersonaResult(codeInfo, scores, results) {
   const { flags } = codeInfo;
-  const typeKey  = `${flags.C}-${flags.A}-${flags.G}`;
-  const novelKey = `${flags.D}-${flags.F}`;
-  const personaKey = `${flags.A}-${flags.F}`;
 
-  const typeLabel = results?.typeLabels?.[typeKey] || null;
+  const typeLabel   = pickByCombo(results?.typeLabels,   [flags.C, flags.A, flags.G]);
+  const idealPersona= pickByCombo(results?.idealPersona, [flags.A, flags.F]);
+  const novelPool   = pickByCombo(results?.novelTitles,  [flags.D, flags.F]) || [];
 
   // 甜度：(E + B) / 2，>=7 全糖 / 4..6 七分糖 / <4 三分糖
   const sweetVal = ((Number(scores.E) || 0) + (Number(scores.B) || 0)) / 2;
@@ -60,25 +84,28 @@ export function buildPersonaResult(codeInfo, scores, results) {
 
   // 小说剧名：从对应池子里选一条，用 seed 保证稳定
   let novel = null;
-  const pool = results?.novelTitles?.[novelKey] || [];
-  if (pool.length) {
+  if (Array.isArray(novelPool) && novelPool.length) {
     const seed = seedFromScores(scores);
-    novel = pool[seed % pool.length];
+    novel = novelPool[seed % novelPool.length];
   }
 
   return {
     code: codeInfo.code,
     flags,
-    keys: { type: typeKey, novel: novelKey, persona: personaKey },
+    keys: {
+      type:    [flags.C, flags.A, flags.G].join('-'),
+      novel:   [flags.D, flags.F].join('-'),
+      persona: [flags.A, flags.F].join('-'),
+    },
     typeLabel,
     novel,
     sweetness,
     sweetVal,
-    idealPersona: results?.idealPersona?.[personaKey] || null,
-    replyStyle:   results?.replyStyle?.[flags.C] || null,
-    intimacy:     results?.intimacy?.[flags.E] || null,
-    drama:        results?.drama?.[flags.D] || null,
-    guidance:     results?.guidance?.[flags.G] || null,
+    idealPersona,
+    replyStyle: results?.replyStyle?.[flags.C] || null,
+    intimacy:   results?.intimacy?.[flags.E]   || null,
+    drama:      results?.drama?.[flags.D]      || null,
+    guidance:   results?.guidance?.[flags.G]   || null,
   };
 }
 
