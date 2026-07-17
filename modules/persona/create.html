@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="nocturne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>制作人设 · Nocturne</title>
+  <link rel="stylesheet" href="../../assets/base.css">
+  <link rel="stylesheet" href="../../assets/theme.css">
+  <link rel="stylesheet" href="./persona.css">
+</head>
+<body>
+  <div data-include="../../assets/partials/header.html" data-base="../../"></div>
+
+  <main class="page persona-page">
+    <div class="persona-bg-ornament" aria-hidden="true"></div>
+
+    <section class="persona-hero">
+      <p class="persona-eyebrow" data-slot="mode-label">♪ Persona Studio</p>
+      <h1 class="persona-title" data-slot="page-title">制作人设</h1>
+      <p class="persona-subtitle" data-slot="page-subtitle">按步骤填写，AI 帮你写三份候选</p>
+      <a class="persona-back-link" href="./index.html">← 返回入口</a>
+    </section>
+
+    <!-- 阶段 A：公示（仅 based 模式显示） -->
+    <section class="persona-stage" data-stage="notice" hidden>
+      <div class="glass persona-notice-card">
+        <div class="persona-notice-glyph" aria-hidden="true">♪</div>
+        <h2 class="persona-notice-title">使用前须知</h2>
+        <p>所有项目均保存在本地浏览器内，不存在盗卡盗设定风险。</p>
+        <p>使用该功能之前请确保征得卡作者本人的意愿。</p>
+        <p class="persona-notice-thanks">感谢你的使用</p>
+        <div class="persona-notice-actions">
+          <a class="btn-ghost" href="./index.html">返回</a>
+          <button class="btn-primary" data-action="notice-confirm">我已确认，继续</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 阶段 B：设置 -->
+    <section class="persona-stage" data-stage="setup" hidden>
+      <div class="persona-setup-grid">
+        <div class="persona-setup-main">
+
+          <!-- based：角色卡 -->
+          <div class="glass persona-section persona-based-only" hidden>
+            <div class="persona-section-head">
+              <h2 class="persona-section-title">目标角色卡</h2>
+              <span class="persona-required-badge">必填</span>
+            </div>
+            <p class="persona-hint">粘贴角色卡文本（描述 / 首条消息 / 示例对话等，越完整越好）</p>
+            <textarea class="persona-textarea persona-textarea-large" data-field="charCard" placeholder="粘贴目标角色卡的完整文本..."></textarea>
+          </div>
+          <div class="glass persona-section persona-based-only" hidden>
+            <div class="persona-section-head">
+              <h2 class="persona-section-title">世界书</h2>
+              <span class="persona-optional-badge">选填</span>
+            </div>
+            <p class="persona-hint">粘贴关联的世界书条目，没有可留空</p>
+            <textarea class="persona-textarea" data-field="lorebook" placeholder="粘贴世界书内容..."></textarea>
+          </div>
+
+          <!-- 世界观 -->
+          <div class="glass persona-section">
+            <div class="persona-section-head">
+              <h2 class="persona-section-title">世界观模板</h2>
+            </div>
+            <div class="persona-world-grid" data-field="worldTemplate"></div>
+            <div class="persona-slot" data-slot="customWorld" hidden>
+              <label class="persona-label">自定义世界观描述</label>
+              <textarea class="persona-textarea" data-field="customWorld" placeholder="例：末世后的地下城，能源紧缺，人类分派系..."></textarea>
+            </div>
+          </div>
+
+          <!-- 基础参数 -->
+          <div class="glass persona-section">
+            <div class="persona-section-head">
+              <h2 class="persona-section-title">基础参数</h2>
+            </div>
+
+            <div class="persona-field">
+              <label class="persona-label">文风</label>
+              <div class="persona-chips" data-field="writingStyle"></div>
+            </div>
+
+            <div class="persona-field">
+              <label class="persona-label">字数档位</label>
+              <div class="persona-chips" data-field="wordCount"></div>
+              <div class="persona-slot" data-slot="customWordCount" hidden>
+                <input type="number" class="persona-input" data-field="customWordCount" placeholder="例如 1500" min="200" max="8000">
+              </div>
+            </div>
+          </div>
+
+          <!-- 关系与向 -->
+          <div class="glass persona-section">
+            <div class="persona-section-head">
+              <h2 class="persona-section-title">关系与向</h2>
+              <span class="persona-optional-badge">辅助参数</span>
+            </div>
+
+            <div class="persona-field">
+              <label class="persona-label">性向</label>
+              <div class="persona-chips" data-field="orientationTag"></div>
+            </div>
+
+            <div class="persona-field">
+              <label class="persona-label">指向性</label>
+              <p class="persona-hint">决定人设在关系里的姿态</p>
+              <div class="persona-chips persona-chips-block" data-field="directionTag"></div>
+            </div>
+
+            <div class="persona-field">
+              <label class="persona-label">关系 tag / XP 偏好</label>
+              <p class="persona-hint">可多选，也可以自己写一个回车追加</p>
+              <div class="persona-tag-cloud" data-field="relationTags"></div>
+              <div class="persona-tag-input-row">
+                <input type="text" class="persona-input persona-tag-input" data-field="relationTagInput" placeholder="自定义 tag，回车添加">
+                <button class="btn-ghost persona-tag-add" data-action="add-relation-tag">添加</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- NSFW -->
+          <div class="glass persona-section">
+            <div class="persona-section-head">
+              <h2 class="persona-section-title">NSFW 破限</h2>
+            </div>
+            <div class="persona-chips" data-field="nsfwMode">
+              <button type="button" class="persona-chip" data-value="off">关闭</button>
+              <button type="button" class="persona-chip" data-value="default">默认破限</button>
+              <button type="button" class="persona-chip" data-value="custom">自填破限</button>
+            </div>
+            <p class="persona-hint persona-nsfw-note" data-slot="nsfwNote">
+              开启后会在末尾追加"亲密向补充"区块，AI 会把 NSFW 相关内容写在那里。
+            </p>
+            <div class="persona-slot" data-slot="nsfwCustom" hidden>
+              <label class="persona-label">自填破限提示词</label>
+              <textarea class="persona-textarea" data-field="nsfwCustom" placeholder="粘贴你自己的破限提示词..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右侧附加要求 -->
+        <aside class="persona-setup-aside">
+          <div class="glass persona-extra-card">
+            <label class="persona-label">附加要求</label>
+            <p class="persona-hint">身份倾向、性格偏好、剧情走向、想要或想避开的元素都能写</p>
+            <textarea class="persona-textarea persona-textarea-tall" data-field="extraRequest" placeholder="例：希望是一个表面克制、内里执拗的年轻医师，与目标角色有旧识关系..."></textarea>
+          </div>
+          <button class="btn-primary persona-generate-btn" data-action="generate">
+            <span>♪ 开始生成 3 份候选</span>
+          </button>
+          <p class="persona-tip">生成期间可以取消。生成后每一块都可以单独重 roll 或直接编辑。</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 阶段 C：生成中 -->
+    <section class="persona-stage" data-stage="generating" hidden>
+      <div class="glass persona-loading-card">
+        <div class="persona-loading-orb" aria-hidden="true"></div>
+        <p class="persona-loading-text">AI 正在写三份候选人设</p>
+        <p class="persona-loading-status" data-slot="loading-status">0 / 3 完成</p>
+        <div class="persona-loading-actions">
+          <button class="btn-ghost" data-action="cancel">取消</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 阶段 D：结果 -->
+    <section class="persona-stage" data-stage="result" hidden>
+      <div class="persona-result-header">
+        <div class="persona-tabs" data-slot="candidate-tabs" role="tablist"></div>
+        <div class="persona-result-actions">
+          <button class="btn-ghost" data-action="back-setup">修改设置</button>
+          <button class="btn-ghost" data-action="toggle-format" data-slot="format-btn">复制格式：纯文本</button>
+          <button class="btn-ghost" data-action="reroll-all">全部重 roll</button>
+          <button class="btn-primary" data-action="copy-current">复制当前</button>
+        </div>
+      </div>
+      <div class="persona-result-body" data-slot="candidate-body"></div>
+    </section>
+
+    <!-- 阶段 E：错误 -->
+    <section class="persona-stage" data-stage="error" hidden>
+      <div class="glass persona-error-card">
+        <h2>出了点问题</h2>
+        <p data-slot="error-message"></p>
+        <div class="persona-error-actions">
+          <button class="btn-ghost" data-action="back-setup">回到设置</button>
+          <button class="btn-primary" data-action="retry">重试</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="persona-toast" data-slot="toast" hidden></div>
+  </main>
+
+  <div data-include="../../assets/partials/footer.html" data-base="../../"></div>
+
+  <script type="module" src="./create.js"></script>
+  <script src="../../assets/include.js"></script>
+</body>
+</html>
