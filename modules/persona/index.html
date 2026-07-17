@@ -3,43 +3,164 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>人设生产 · Nocturne</title>
+  <title>人设生产 · Persona Studio</title>
+
+  <!-- 引入基础和主题，依赖这里的变量实现主题无缝切换 -->
   <link rel="stylesheet" href="../../assets/base.css">
   <link rel="stylesheet" href="../../assets/theme.css">
   <link rel="stylesheet" href="./persona.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <!-- 顶部导航 -->
   <div data-include="../../assets/partials/header.html" data-base="../../"></div>
 
-  <main class="page persona-page">
-    <div class="persona-bg-ornament" aria-hidden="true"></div>
+  <!-- 用一个专属类名包裹，防止污染其他页面的 CSS -->
+  <main class="persona-index-main">
+    
+    <!-- 固定噪点及灯光层 -->
+    <div class="fixed-bg">
+      <div class="gradient-orb"></div>
+      <div class="gradient-orb-2"></div>
+      <div class="noise"></div>
+    </div>
 
-    <section class="persona-hero">
-      <p class="persona-eyebrow">♪ Persona Studio</p>
-      <h1 class="persona-title">人设生产</h1>
-      <p class="persona-subtitle">选一种入口，AI 会写三份候选人设给你挑</p>
-    </section>
+    <!-- 视差装饰层 -->
+    <div class="parallax-layer">
+      <div class="giant-text font-mono" data-speed="0.15">DATA_STREAM//</div>
+      <div class="bg-grid" data-speed="-0.25"></div>
+    </div>
 
-    <section class="persona-entry-grid">
-      <a class="glass persona-entry-card" href="./create.html?mode=scratch">
-        <div class="persona-entry-index">01</div>
-        <h2 class="persona-entry-title">从零开始</h2>
-        <p class="persona-entry-desc">选择世界观模板、文风、篇幅，从空白页里长出一个人设</p>
-        <div class="persona-entry-cta">开始 <span aria-hidden="true">→</span></div>
-      </a>
+    <div class="content-wrapper">
+      <!-- Hero 区 -->
+      <section class="hero-section">
+        <div class="status-bar font-mono" data-speed="0.2">
+          <div class="recording"><div class="rec-dot"></div> NOW CAPTURING</div>
+          <div class="time-code" id="timer">00:00:00:00</div>
+        </div>
 
-      <a class="glass persona-entry-card" href="./create.html?mode=based">
-        <div class="persona-entry-index">02</div>
-        <h2 class="persona-entry-title">根据已有 char 设定</h2>
-        <p class="persona-entry-desc">上传目标角色卡与世界书，生成一个能和 ta 玩到一起的用户人设</p>
-        <div class="persona-entry-cta">开始 <span aria-hidden="true">→</span></div>
-      </a>
-    </section>
+        <div class="visualizer" id="eq" data-speed="0.3"></div>
+
+        <div class="title-group" data-speed="0.4">
+          <p class="persona-eyebrow font-cinzel">♪ Persona Studio</p>
+          <h1 class="persona-title">人设生产</h1>
+          <p class="persona-subtitle">选一种入口，AI 将解析并编写三份候选人设档案供你挑选</p>
+        </div>
+
+        <div class="scroll-indicator font-mono" data-speed="-0.1">SCROLL DOWN</div>
+      </section>
+
+      <!-- 卡片入口区 -->
+      <section class="cards-section">
+        <!-- 模式一 -->
+        <div class="card-wrapper" data-speed="0.15">
+          <a class="entry-card" href="./create.html?mode=scratch">
+            <div class="crosshair ch-tl"></div>
+            <div class="crosshair ch-br"></div>
+            <div class="card-top-row font-mono">
+              <span class="entry-index">TRACK 01</span>
+              <span class="entry-sys">SYS.INIT(SCRATCH)</span>
+            </div>
+            <h2 class="entry-title">从零开始</h2>
+            <p class="entry-desc">选择世界观模板、文风、篇幅，从空白数据带里演化出一个全新的人设。</p>
+            <div class="marquee"></div>
+          </a>
+        </div>
+
+        <!-- 模式二 -->
+        <div class="card-wrapper" data-speed="0.05">
+          <a class="entry-card" href="./create.html?mode=based">
+            <div class="crosshair ch-tl"></div>
+            <div class="crosshair ch-br"></div>
+            <div class="card-top-row font-mono">
+              <span class="entry-index">TRACK 02</span>
+              <span class="entry-sys">SYS.SYNC(CHAR_SET)</span>
+            </div>
+            <h2 class="entry-title">根据已有 char 设定</h2>
+            <p class="entry-desc">上传目标角色卡与世界书，系统将生成一个能和 ta 完美共振的用户人设档案。</p>
+            <div class="marquee"></div>
+          </a>
+        </div>
+      </section>
+    </div>
   </main>
 
+  <!-- 底部 Footer -->
   <div data-include="../../assets/partials/footer.html" data-base="../../"></div>
 
+  <!-- 全局引用的 JS -->
   <script src="../../assets/include.js"></script>
+
+  <!-- 本页专属交互 JS -->
+  <script>
+    /* 1. 高性能滚动视差引擎 */
+    const parallaxElements = document.querySelectorAll('[data-speed]');
+    let ticking = false;
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+          parallaxElements.forEach(el => {
+            const speed = parseFloat(el.getAttribute('data-speed'));
+            const yPos = scrollY * speed;
+            el.style.transform = `translateY(${yPos}px)`;
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    /* 2. 动态音频均衡器 (EQ) */
+    const eqContainer = document.getElementById('eq');
+    const cols = 24, rows = 6;  
+    for (let i = 0; i < cols; i++) {
+      const col = document.createElement('div');
+      col.className = 'vol-bar';
+      for (let j = 0; j < rows; j++) {
+        const dot = document.createElement('div');
+        dot.className = 'vol-dot';
+        col.appendChild(dot);
+      }
+      eqContainer.appendChild(col);
+    }
+
+    function animateEQ() {
+      const bars = document.querySelectorAll('.vol-bar');
+      bars.forEach(bar => {
+        const dots = bar.querySelectorAll('.vol-dot');
+        dots.forEach(d => d.className = 'vol-dot'); 
+        
+        const activeCount = Math.floor(Math.random() * (rows + 1));
+        for (let i = 0; i < activeCount; i++) {
+          const dot = dots[rows - 1 - i];
+          if (dot) {
+            dot.classList.add('active');
+            if (i === activeCount - 1 && activeCount >= rows - 1) {
+              dot.classList.add('peak');
+            }
+          }
+        }
+      });
+      setTimeout(animateEQ, 100 + Math.random() * 150);
+    }
+    animateEQ();
+
+    /* 3. 真实录音计时器 */
+    const startTime = Date.now();
+    setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const h = String(Math.floor(elapsed / 3600000)).padStart(2, '0');
+      const m = String(Math.floor((elapsed % 3600000) / 60000)).padStart(2, '0');
+      const s = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, '0');
+      const msPart = String(Math.floor((elapsed % 1000) / 10)).padStart(2, '0');
+      document.getElementById('timer').innerText = `${h}:${m}:${s}:${msPart}`;
+    }, 47);
+  </script>
 </body>
 </html>
+
 

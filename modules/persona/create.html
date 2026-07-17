@@ -3,32 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>制作人设 · Nocturne</title>
+  <title>制作人设 · Persona Studio</title>
+  
   <link rel="stylesheet" href="../../assets/base.css">
   <link rel="stylesheet" href="../../assets/theme.css">
   <link rel="stylesheet" href="./persona.css">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
   <div data-include="../../assets/partials/header.html" data-base="../../"></div>
 
-  <main class="page persona-page">
-    <div class="persona-bg-ornament" aria-hidden="true"></div>
+  <!-- 动态深空背景与网格底纹 -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="grid-overlay"></div>
+  </div>
 
-    <section class="persona-hero">
-      <p class="persona-eyebrow" data-slot="mode-label">♪ Persona Studio</p>
-      <h1 class="persona-title" data-slot="page-title">制作人设</h1>
-      <p class="persona-subtitle" data-slot="page-subtitle">按步骤填写，AI 帮你写三份候选</p>
-      <a class="persona-back-link" href="./index.html">← 返回入口</a>
+  <main class="page persona-page">
+    
+    <section class="persona-hero bento-card" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <p class="persona-eyebrow font-mono" data-slot="mode-label">SYS.VER.2.0 // PERSONA STUDIO</p>
+        <h1 class="persona-title" data-slot="page-title">制作人设</h1>
+        <p class="persona-subtitle font-mono" data-slot="page-subtitle">按步骤录入数据，AI 引擎将演算三份候选档案</p>
+      </div>
+      <!-- 纯CSS旋转雷达装饰 -->
+      <div class="spin-radar" aria-hidden="true"></div>
+      <a class="persona-back-link font-mono" href="./index.html">← RETURN</a>
     </section>
 
     <!-- 阶段 A：公示（仅 based 模式显示） -->
     <section class="persona-stage" data-stage="notice" hidden>
-      <div class="glass persona-notice-card">
+      <div class="bento-card tech-corners persona-notice-card">
         <div class="persona-notice-glyph" aria-hidden="true">♪</div>
-        <h2 class="persona-notice-title">使用前须知</h2>
+        <h2 class="persona-section-title">使用前须知</h2>
         <p>所有项目均保存在本地浏览器内，不存在盗卡盗设定风险。</p>
         <p>使用该功能之前请确保征得卡作者本人的意愿。</p>
-        <p class="persona-notice-thanks">感谢你的使用</p>
+        <p class="persona-notice-thanks font-mono">SYS.MSG // THANKS FOR USING</p>
         <div class="persona-notice-actions">
           <a class="btn-ghost" href="./index.html">返回</a>
           <button class="btn-primary" data-action="notice-confirm">我已确认，继续</button>
@@ -42,25 +55,28 @@
         <div class="persona-setup-main">
 
           <!-- based：角色卡 -->
-          <div class="glass persona-section persona-based-only" hidden>
+          <div class="bento-card tech-corners persona-section persona-based-only" hidden>
+            <div class="deco-vertical">DATA.STREAM.ACTIVE</div>
+            <div class="scanline"></div>
             <div class="persona-section-head">
               <h2 class="persona-section-title">目标角色卡</h2>
               <span class="persona-required-badge">必填</span>
             </div>
-            <p class="persona-hint">粘贴角色卡文本（描述 / 首条消息 / 示例对话等，越完整越好）</p>
-            <textarea class="persona-textarea persona-textarea-large" data-field="charCard" placeholder="粘贴目标角色卡的完整文本..."></textarea>
+            <p class="persona-hint font-mono">PASTE TARGET CHAR CARD OR LOREBOOK</p>
+            <textarea class="persona-textarea persona-textarea-large" data-field="charCard" placeholder=">> 粘贴目标角色卡的完整文本...&#10;>> 包含描述 / 首条消息 / 示例对话等，越完整越好。"></textarea>
           </div>
-          <div class="glass persona-section persona-based-only" hidden>
+          
+          <div class="bento-card tech-corners persona-section persona-based-only" hidden>
             <div class="persona-section-head">
               <h2 class="persona-section-title">世界书</h2>
               <span class="persona-optional-badge">选填</span>
             </div>
-            <p class="persona-hint">粘贴关联的世界书条目，没有可留空</p>
-            <textarea class="persona-textarea" data-field="lorebook" placeholder="粘贴世界书内容..."></textarea>
+            <p class="persona-hint font-mono">OPTIONAL // WORLD LOREBOOK</p>
+            <textarea class="persona-textarea" data-field="lorebook" placeholder=">> 粘贴关联的世界书条目，没有可留空..."></textarea>
           </div>
 
           <!-- 世界观 -->
-          <div class="glass persona-section">
+          <div class="bento-card tech-corners persona-section">
             <div class="persona-section-head">
               <h2 class="persona-section-title">世界观模板</h2>
             </div>
@@ -72,18 +88,18 @@
           </div>
 
           <!-- 基础参数 -->
-          <div class="glass persona-section">
+          <div class="bento-card tech-corners persona-section">
             <div class="persona-section-head">
-              <h2 class="persona-section-title">基础参数</h2>
+              <h2 class="persona-section-title">频率调校 (基础参数)</h2>
             </div>
 
             <div class="persona-field">
-              <label class="persona-label">文风</label>
+              <label class="persona-label font-mono">STYLE_PRESET // 文风</label>
               <div class="persona-chips" data-field="writingStyle"></div>
             </div>
 
             <div class="persona-field">
-              <label class="persona-label">字数档位</label>
+              <label class="persona-label font-mono">LENGTH_TARGET // 字数档位</label>
               <div class="persona-chips" data-field="wordCount"></div>
               <div class="persona-slot" data-slot="customWordCount" hidden>
                 <input type="number" class="persona-input" data-field="customWordCount" placeholder="例如 1500" min="200" max="8000">
@@ -92,9 +108,9 @@
           </div>
 
           <!-- 关系与向 -->
-          <div class="glass persona-section">
+          <div class="bento-card tech-corners persona-section">
             <div class="persona-section-head">
-              <h2 class="persona-section-title">关系与向</h2>
+              <h2 class="persona-section-title">声部羁绊 (关系与向)</h2>
               <span class="persona-optional-badge">辅助参数</span>
             </div>
 
@@ -120,15 +136,13 @@
             </div>
           </div>
 
-                    <!-- 角色定位（v0.5 新增） -->
-          <div class="glass persona-section">
+          <!-- 角色定位 -->
+          <div class="bento-card tech-corners persona-section">
             <div class="persona-section-head">
               <h2 class="persona-section-title">角色定位</h2>
               <span class="persona-optional-badge">辅助参数</span>
             </div>
-            <p class="persona-hint" data-slot="position-user-note">
-              <!-- 由 JS 从 templates.POSITION_USER_NOTE 注入 -->
-            </p>
+            <p class="persona-hint" data-slot="position-user-note"></p>
 
             <div class="persona-field">
               <label class="persona-label">用户性别</label>
@@ -160,16 +174,15 @@
             </div>
           </div>
 
-
           <!-- NSFW -->
-          <div class="glass persona-section">
+          <div class="bento-card tech-corners persona-section">
             <div class="persona-section-head">
-              <h2 class="persona-section-title">NSFW 破限</h2>
+              <h2 class="persona-section-title">NSFW_OVERRIDE</h2>
             </div>
             <div class="persona-chips" data-field="nsfwMode">
-              <button type="button" class="persona-chip" data-value="off">关闭</button>
-              <button type="button" class="persona-chip" data-value="default">默认破限</button>
-              <button type="button" class="persona-chip" data-value="custom">自填破限</button>
+              <button type="button" class="persona-chip font-mono" data-value="off">解除限制 OFF</button>
+              <button type="button" class="persona-chip font-mono" data-value="default">默认破限 ON</button>
+              <button type="button" class="persona-chip font-mono" data-value="custom">自填破限</button>
             </div>
             <p class="persona-hint persona-nsfw-note" data-slot="nsfwNote">
               开启后会在末尾追加"亲密向补充"区块，AI 会把 NSFW 相关内容写在那里。
@@ -181,36 +194,53 @@
           </div>
         </div>
 
-        <!-- 右侧附加要求 -->
+        <!-- 右侧附加要求与生成卡片 -->
         <aside class="persona-setup-aside">
-          <div class="glass persona-extra-card">
+          <!-- 录音微件 (音频互动) -->
+          <div class="bento-card tech-corners" style="padding: 20px; display: flex; align-items: center; justify-content: space-between;">
+             <span class="font-mono" style="font-size: 0.75rem; color: var(--text-dim);">AURAL_SYNC</span>
+             <div class="audio-visualizer" id="visualizer">
+               <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+               <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+               <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+             </div>
+          </div>
+
+          <div class="bento-card tech-corners persona-extra-card">
             <label class="persona-label">附加要求</label>
             <p class="persona-hint">身份倾向、性格偏好、剧情走向、想要或想避开的元素都能写</p>
-            <textarea class="persona-textarea persona-textarea-tall" data-field="extraRequest" placeholder="例：希望是一个表面克制、内里执拗的年轻医师，与目标角色有旧识关系..."></textarea>
+            <textarea class="persona-textarea persona-textarea-tall" data-field="extraRequest" placeholder="例：希望是一个表面克制、内里执拗的年轻医师..."></textarea>
           </div>
-          <button class="btn-primary persona-generate-btn" data-action="generate">
-            <span>♪ 开始生成 3 份候选</span>
+
+          <button class="btn-primary persona-generate-btn" data-action="generate" style="background: var(--accent); color: var(--bg);">
+            <div class="barcode" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <span class="font-mono">♪ INIT_SEQUENCE</span>
           </button>
           <p class="persona-tip">生成期间可以取消。生成后每一块都可以单独重 roll 或直接编辑。</p>
         </aside>
       </div>
     </section>
 
-    <!-- 阶段 C：生成中 -->
+       <!-- 阶段 C：生成中 -->
     <section class="persona-stage" data-stage="generating" hidden>
-      <div class="glass persona-loading-card">
-        <div class="persona-loading-orb" aria-hidden="true"></div>
-        <p class="persona-loading-text">AI 正在写三份候选人设</p>
-        <p class="persona-loading-status" data-slot="loading-status">0 / 3 完成</p>
+      <div class="bento-card tech-corners persona-loading-card">
+        
+        <div class="ethereal-loader" aria-hidden="true">
+          <div class="ethereal-core"></div>
+          <div class="ethereal-dust"></div>
+        </div>
+        
+        <p class="persona-loading-text">AI 正在演算候选乐章</p>
+        <p class="persona-loading-status font-mono" data-slot="loading-status">0 / 3 完成</p>
         <div class="persona-loading-actions">
-          <button class="btn-ghost" data-action="cancel">取消</button>
+          <button class="btn-ghost font-mono" data-action="cancel" style="margin-top: 20px;">ABORT</button>
         </div>
       </div>
     </section>
 
     <!-- 阶段 D：结果 -->
     <section class="persona-stage" data-stage="result" hidden>
-      <div class="persona-result-header">
+      <div class="persona-result-header bento-card">
         <div class="persona-tabs" data-slot="candidate-tabs" role="tablist"></div>
         <div class="persona-result-actions">
           <button class="btn-ghost" data-action="back-setup">修改设置</button>
@@ -224,7 +254,7 @@
 
     <!-- 阶段 E：错误 -->
     <section class="persona-stage" data-stage="error" hidden>
-      <div class="glass persona-error-card">
+      <div class="bento-card tech-corners persona-error-card">
         <h2>出了点问题</h2>
         <p data-slot="error-message"></p>
         <div class="persona-error-actions">
@@ -239,7 +269,63 @@
 
   <div data-include="../../assets/partials/footer.html" data-base="../../"></div>
 
+  <!-- 本地逻辑模块 -->
   <script type="module" src="./create.js"></script>
   <script src="../../assets/include.js"></script>
+
+  <!-- 视觉动效辅助 JS (无冲突) -->
+  <script>
+    // 1. 探照灯鼠标追踪 (Spotlight effect)
+    document.addEventListener('mousemove', e => {
+      document.querySelectorAll(".bento-card").forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+      });
+    });
+
+    // 2. 打字时音频微件共振跳动 (Audio Sync)
+    const bars = document.querySelectorAll('.bar');
+    let typingTimer;
+
+    function triggerAudioBurst() {
+      bars.forEach(bar => {
+        const height = Math.random() * 25 + 5;
+        bar.style.height = `${height}px`;
+        bar.style.background = 'var(--accent)'; 
+        bar.style.boxShadow = '0 0 8px var(--accent-glow)';
+      });
+
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        bars.forEach(bar => {
+          bar.style.height = '5px';
+          bar.style.background = 'var(--text-dim)';
+          bar.style.boxShadow = 'none';
+        });
+      }, 100);
+    }
+
+    // 监听所有的 textarea 触发共振
+    document.addEventListener('input', e => {
+      if (e.target.tagName.toLowerCase() === 'textarea' || e.target.tagName.toLowerCase() === 'input') {
+        triggerAudioBurst();
+      }
+    });
+
+    // 待机时的轻微呼吸
+    setInterval(() => {
+      if (!typingTimer || typingTimer._idleTimeout < 0) {
+        bars.forEach(bar => {
+          if (bar.style.height === '5px' || !bar.style.height) {
+            bar.style.height = `${Math.random() * 6 + 4}px`;
+          }
+        });
+      }
+    }, 500);
+  </script>
 </body>
 </html>
+
