@@ -1,6 +1,6 @@
 // modules/repo/templates.js
 // Nocturne · Repo 卡模块数据源
-// 主题 tag / 感受词 / 世界观 / 字体 / 高亮划线颜色 / 马赛克 / Canvas 配色
+// 主题 tag / 感受词 / 世界观 / 字体 / 高亮划线颜色 / 马赛克 / Canvas 配色 / 模板
 
 // ── 主题标签（复用 persona 的 30 条 · 用户可自填追加）──────────
 export const THEME_TAGS = [
@@ -79,7 +79,7 @@ export const MOSAIC_GLYPHS = ['█', '▓', '░', '※', '◈', '❋', '⚹', '
 
 // 供用户选择的固定符号预设（点选 chip；也可以自填）
 export const MOSAIC_GLYPH_PRESETS = [
-  { id: 'random',  label: '随机', char: '' },        // 空串=用 MOSAIC_GLYPHS 随机
+  { id: 'random',  label: '随机', char: '' },
   { id: 'block',   label: '█',   char: '█' },
   { id: 'shade',   label: '▓',   char: '▓' },
   { id: 'star',    label: '★',   char: '★' },
@@ -116,10 +116,32 @@ export function findCanvasTheme(id) {
   return CANVAS_THEMES.find(t => t.id === id) || CANVAS_THEMES[0];
 }
 
-// ── 模板池（当前只做唱片封套，之后可加）─────────────────────────
+// ── 模板池 ─────────────────────────────────────────────────────
 export const CARD_TEMPLATES = [
-  { id: 'vinyl', label: '唱片封套', desc: 'Side A · Track 01 感' },
+  { id: 'vinyl',    label: '唱片封套',    desc: 'Side A · Track 01' },
+  { id: 'bookpage', label: '书页 · 大头像', desc: '现代书页 · 章节感' },
+  { id: 'cdinner',  label: 'CD 内页',     desc: '曲目列表 · 制作人' },
+  { id: 'ticket',   label: '演出票根',    desc: '入场券 · 长条纵向' },
 ];
+
+// 每个模板隐藏的字段（列表非空时切模板要弹窗确认）
+export const TEMPLATE_HIDDEN_FIELDS = {
+  vinyl:    [],
+  bookpage: [],
+  cdinner:  [],
+  ticket:   ['review', 'passage'],
+};
+
+// 字段用户可读名（弹窗提示用）
+export const FIELD_LABELS = {
+  summary: '卡片简介',
+  review:  '体验感受',
+  passage: '美味文段',
+};
+
+export function findTemplate(id) {
+  return CARD_TEMPLATES.find(t => t.id === id) || CARD_TEMPLATES[0];
+}
 
 // ── 存储 key ───────────────────────────────────────────────────
 export const STORAGE_KEYS = {
@@ -129,8 +151,8 @@ export const STORAGE_KEYS = {
 
 // ── 上限常量 ───────────────────────────────────────────────────
 export const MAX_MOSAIC_WORDS   = 5;
-export const MAX_AVATAR_SIZE    = 2 * 1024 * 1024;   // 2 MB
-export const MAX_BG_SIZE        = 5 * 1024 * 1024;   // 5 MB
+export const MAX_AVATAR_SIZE    = 2 * 1024 * 1024;
+export const MAX_BG_SIZE        = 5 * 1024 * 1024;
 export const MAX_GALLERY_CARDS  = 20;
 export const RECOMMENDED_CARDS  = 20;
 
@@ -140,3 +162,4 @@ export const WATERMARK_TEXT = 'nocturn-shadow';
 // ── 画廊风险提示文案 ───────────────────────────────────────────
 export const GALLERY_RISK_NOTE =
   '收藏数据只存在你当前的浏览器里，清理缓存、换设备、无痕模式都可能会丢。图片会占较大空间，建议不超过 20 张。重要的卡请及时导出图片保存。';
+

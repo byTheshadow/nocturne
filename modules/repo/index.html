@@ -37,6 +37,12 @@
         <!-- 左：表单 -->
         <div class="repo-form panel glass">
           <div class="repo-form-scroll">
+                        <!-- 模板选择 -->
+            <div class="field">
+              <label class="field-label">卡片模板</label>
+              <div class="chip-group" data-chips="templateId"></div>
+            </div>
+
 
             <!-- 基础信息 -->
             <div class="field">
@@ -249,6 +255,20 @@
   </main>
 
   <div data-include="../../assets/partials/footer.html" data-base="../../"></div>
+  
+    <!-- 切模板前提示：某些字段会被隐藏 -->
+  <div class="repo-modal" data-role="templateSwitchModal" hidden>
+    <div class="repo-modal-mask" data-role="templateSwitchClose"></div>
+    <div class="repo-modal-body glass">
+      <h3 class="repo-modal-title">切换模板</h3>
+      <p class="repo-modal-desc" data-role="templateSwitchDesc"></p>
+      <div class="repo-modal-actions">
+        <button class="btn-ghost" data-action="templateSwitchCancel">取消</button>
+        <button class="btn-primary" data-action="templateSwitchConfirm">继续切换</button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- 导出后弹窗：询问是否清空当前草稿 -->
   <div class="repo-modal" data-role="afterExportModal" hidden>

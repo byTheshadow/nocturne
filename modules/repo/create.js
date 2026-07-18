@@ -8,7 +8,9 @@ import {
   MOSAIC_STYLES, MOSAIC_GLYPH_PRESETS, MAX_MOSAIC_WORDS,
   CANVAS_THEMES, MAX_AVATAR_SIZE, MAX_BG_SIZE,
   GALLERY_RISK_NOTE,
+  CARD_TEMPLATES, TEMPLATE_HIDDEN_FIELDS, FIELD_LABELS, findTemplate,
 } from './templates.js';
+
 
 import {
   ensureFont, saveDraft, loadDraft, clearDraft,
@@ -25,6 +27,7 @@ import { initGallery, renderGallery, refreshGalleryCount } from './gallery.js';
 function defaultConfig() {
   return {
     id: null,
+    templateId: 'vinyl',
     charName: '',
     author: '',
     date: today(),
@@ -128,6 +131,7 @@ function bootstrap() {
 // ══════════════════════════════════════════════════════════════
 
 function renderAllChips() {
+    renderChipGroup('templateId', CARD_TEMPLATES.map(t => ({ id: t.id, label: t.label })), { mode: 'single' });
   renderChipGroup('worldTag', [
     ...WORLD_TAGS.map(t => ({ id: t.id, label: t.label })),
     { id: 'custom', label: '自填' },
@@ -269,10 +273,13 @@ function bindEvents() {
     else if (action === 'clear') onAfterExportClear();
     else if (action === 'keep') closeAfterExportModal();
     else if (action === 'clearAll') onClearAllCards();
+    else if (action === 'templateSwitchConfirm') onTemplateSwitchConfirm();
+    else if (action === 'templateSwitchCancel') closeTemplateSwitchModal();
   });
 
   // 弹窗遮罩关闭
   $('[data-role="afterExportClose"]')?.addEventListener('click', closeAfterExportModal);
+  $('[data-role="templateSwitchClose"]')?.addEventListener('click', closeTemplateSwitchModal);
 
   // 美味文段：选中弹工具条
   const preview = $('[data-role="passagePreview"]');
@@ -296,6 +303,13 @@ function bindEvents() {
 // ══════════════════════════════════════════════════════════════
 
 function selectChip(field, value) {
+  // 模板切换：拦截，若需要隐藏字段则先弹窗确认
+  if (field === 'templateId') {
+    if (value === state.config.templateId) return; // 点当前项不动
+    tryApplyTemplateSwitch(value);
+    return;
+  }
+
   const cur = state.config[field];
   if (Array.isArray(cur)) {
     const has = cur.includes(value);
@@ -766,6 +780,59 @@ function openCardForEdit(id) {
 }
 
 // ══════════════════════════════════════════════════════════════
+// 11.5  模板切换
+// ══════════════════════════════════════════════════════════════
+
+let __pendingTemplateId = null;
+
+function tryApplyTemplateSwitch(newId) {
+  const hidden = TEMPLATE_HIDDEN_FIELDS[newId] || [];
+  const willLoseView = hidden.filter(f => hasFieldContent(f));
+
+  if (willLoseView.length === 0) {
+    applyTemplate(newId);
+    return;
+  }
+  // 有非空的隐藏字段，弹窗确认
+  const tpl = findTemplate(newId);
+  const fieldNames = willLoseView.map(f => FIELD_LABELS[f] || f).join('、');
+  const desc = `切到「${tpl.label}」后，${fieldNames} 会被隐藏不显示，但你填的内容会保留。切回其他模板就能看到。`;
+  $('[data-role="templateSwitchDesc"]').textContent = desc;
+  __pendingTemplateId = newId;
+  $('[data-role="templateSwitchModal"]').hidden = false;
+}
+
+function hasFieldContent(field) {
+  if (field === 'passage') {
+    return !!(state.config.passage?.raw && state.config.passage.raw.trim());
+  }
+  const v = state.config[field];
+  if (typeof v === 'string') return !!v.trim();
+  if (Array.isArray(v)) return v.length > 0;
+  return !!v;
+}
+
+function applyTemplate(id) {
+  state.config.templateId = id;
+  syncChipsSelection();
+  scheduleSave();
+  schedulePreview();
+}
+
+function onTemplateSwitchConfirm() {
+  if (__pendingTemplateId) {
+    applyTemplate(__pendingTemplateId);
+    __pendingTemplateId = null;
+  }
+  closeTemplateSwitchModal();
+}
+
+function closeTemplateSwitchModal() {
+  __pendingTemplateId = null;
+  $('[data-role="templateSwitchModal"]').hidden = true;
+}
+
+// ══════════════════════════════════════════════════════════════
 // 12. 视图切换
 // ══════════════════════════════════════════════════════════════
 
@@ -813,4 +880,5 @@ function escapeAttr(s) {
 
 // 暴露给 gallery.js 用
 export { state, showToast };
+
 
