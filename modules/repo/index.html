@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="nocturne">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Repo · Nocturne</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../../assets/theme.css">
+  <link rel="stylesheet" href="../../assets/base.css">
+  <link rel="stylesheet" href="./repo.css">
+</head>
+<body>
+  <div data-include="../../assets/partials/header.html" data-base="../../"></div>
+
+  <main class="page">
+    <header class="repo-head">
+      <p class="section-eyebrow">Track 05 · Memories</p>
+      <h1 class="section-title">Repo 卡</h1>
+      <p class="repo-head-desc">把一次角色扮演体验做成一张可收藏的图卡。数据只留在你的浏览器，不上传。</p>
+    </header>
+
+    <nav class="repo-tabs" role="tablist" aria-label="切换视图">
+      <button class="repo-tab is-active" data-view="create" role="tab" aria-selected="true">编辑卡片</button>
+      <button class="repo-tab" data-view="gallery" role="tab" aria-selected="false">
+        我的收藏 <span class="repo-tab-count" data-role="gallery-count">0</span>
+      </button>
+    </nav>
+
+    <!-- ═══════ 视图 · 编辑 ═══════ -->
+    <section class="repo-view is-active" data-view-panel="create">
+      <div class="repo-layout">
+
+        <!-- 左：表单 -->
+        <div class="repo-form panel glass">
+          <div class="repo-form-scroll">
+
+            <!-- 基础信息 -->
+            <div class="field">
+              <label class="field-label" for="repo-charName">角色卡名称 *</label>
+              <input class="input" id="repo-charName" data-field="charName" placeholder="比如：夜巡长官 · Cassian" />
+            </div>
+
+            <div class="field-grid-2">
+              <div class="field">
+                <label class="field-label" for="repo-author">作者</label>
+                <input class="input" id="repo-author" data-field="author" placeholder="卡作者昵称" />
+              </div>
+              <div class="field">
+                <label class="field-label" for="repo-date">日期</label>
+                <input class="input" type="date" id="repo-date" data-field="date" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="repo-summary">卡片简介</label>
+              <textarea class="input" id="repo-summary" data-field="summary" rows="2" placeholder="一两句话说说这是张什么卡"></textarea>
+            </div>
+
+            <!-- 世界观 -->
+            <div class="field">
+              <div class="field-row"><label class="field-label">世界观</label></div>
+              <div class="chip-group" data-chips="worldTag"></div>
+              <input class="input field-fallback" data-field="customWorld"
+                     placeholder="选择「自填」时在此写世界观名"
+                     style="display:none" data-show-when="worldTag=custom" />
+            </div>
+
+            <!-- 感受词 -->
+            <div class="field">
+              <div class="field-row"><label class="field-label">感受词 · Mood（可多选）</label></div>
+              <div class="chip-group" data-chips="feelingTags"></div>
+              <div class="chip-add-row">
+                <input class="input chip-add-input" data-role="feelingTagAdd" placeholder="自定义感受词，回车添加" />
+              </div>
+            </div>
+
+            <!-- 主题 tag -->
+            <div class="field">
+              <div class="field-row"><label class="field-label">主题 · Tags（可多选）</label></div>
+              <div class="chip-group" data-chips="themeTags"></div>
+              <div class="chip-add-row">
+                <input class="input chip-add-input" data-role="themeTagAdd" placeholder="自定义主题 tag，回车添加" />
+              </div>
+            </div>
+
+            <!-- 体验感受 -->
+            <div class="field">
+              <label class="field-label" for="repo-review">我的体验感受</label>
+              <textarea class="input" id="repo-review" data-field="review" rows="6"
+                        placeholder="随便写。玩下来什么感觉、印象最深的情节、AI 的高光时刻..."></textarea>
+            </div>
+
+            <!-- 美味文段 -->
+            <div class="field">
+              <div class="field-row">
+                <label class="field-label" for="repo-passageRaw">美味文段 · Highlight</label>
+              </div>
+              <textarea class="input" id="repo-passageRaw" data-field="passageRaw" rows="5"
+                        placeholder="粘贴让你上头的原文段落"></textarea>
+              <div class="field-hint">粘贴后在下方预览里选中文字，会弹出高亮 / 下划线工具条。</div>
+
+              <div class="passage-preview" data-role="passagePreview" tabindex="0" aria-label="预览与标记"></div>
+
+              <!-- 浮动工具条 -->
+              <div class="passage-toolbar" data-role="passageToolbar" hidden>
+                <div class="passage-toolbar-row">
+                  <span class="passage-toolbar-label">高亮</span>
+                  <div class="color-swatches" data-role="highlightSwatches"></div>
+                </div>
+                <div class="passage-toolbar-row">
+                  <span class="passage-toolbar-label">下划线</span>
+                  <div class="color-swatches" data-role="underlineSwatches"></div>
+                </div>
+                <button class="btn-subtle" data-role="passageClear">清除标记</button>
+              </div>
+
+              <!-- 马赛克设置 -->
+              <div class="mosaic-config">
+                <div class="mosaic-config-row">
+                  <label class="field-label mosaic-label">马赛克词（最多 5 个）</label>
+                  <div class="mosaic-word-list" data-role="mosaicWordList"></div>
+                  <div class="mosaic-word-add">
+                    <input class="input" data-role="mosaicWordInput" placeholder="输入要打码的词，回车添加" />
+                  </div>
+                </div>
+                <div class="mosaic-config-row">
+                  <label class="field-label mosaic-label">马赛克样式</label>
+                  <div class="chip-group chip-group-inline" data-chips="mosaicStyle"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 头图 -->
+            <div class="field">
+              <label class="field-label">头图（可选 · 唱片中心）</label>
+              <label class="upload-slot" data-role="avatarSlot">
+                <input type="file" accept="image/*" data-role="avatarInput" hidden />
+                <div class="upload-slot-preview" data-role="avatarPreview">
+                  <span class="upload-slot-hint">点击上传 · ≤ 2MB</span>
+                </div>
+              </label>
+              <button class="btn-subtle" data-role="avatarClear" hidden>移除头图</button>
+            </div>
+
+            <!-- 背景 -->
+            <div class="field">
+              <label class="field-label">卡片背景（可选）</label>
+              <label class="upload-slot upload-slot-wide" data-role="bgSlot">
+                <input type="file" accept="image/*" data-role="bgInput" hidden />
+                <div class="upload-slot-preview" data-role="bgPreview">
+                  <span class="upload-slot-hint">点击上传背景图 · ≤ 5MB</span>
+                </div>
+              </label>
+              <button class="btn-subtle" data-role="bgClear" hidden>移除背景</button>
+              <div class="slider-row" data-role="bgOpacityRow" hidden>
+                <label class="field-label mosaic-label">背景不透明度</label>
+                <input type="range" min="10" max="90" step="1" data-field="backgroundOpacity" />
+                <span class="slider-value" data-role="bgOpacityVal">35%</span>
+              </div>
+            </div>
+
+            <!-- 收藏者 -->
+            <div class="field">
+              <label class="field-label" for="repo-nickname">收藏者昵称</label>
+              <input class="input" id="repo-nickname" data-field="nickname" placeholder="留个名，会印在卡片脚注" />
+            </div>
+
+            <!-- 配色 -->
+            <div class="field">
+              <label class="field-label">Canvas 配色</label>
+              <div class="chip-group" data-chips="canvasTheme"></div>
+            </div>
+
+            <!-- 字体 -->
+            <div class="field">
+              <label class="field-label">卡片字体</label>
+              <div class="chip-group chip-group-inline" data-chips="fontMode"></div>
+
+              <div data-show-when="fontMode=builtin">
+                <div class="chip-group" data-chips="fontBuiltinId"></div>
+              </div>
+
+              <div data-show-when="fontMode=cssurl" style="display:none">
+                <input class="input" data-field="fontUrl" placeholder="CSS URL：如 https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap" />
+                <input class="input field-fallback" data-field="fontFamily" placeholder='font-family 名称：如 "Ma Shan Zheng"' />
+              </div>
+
+              <div data-show-when="fontMode=fileurl" style="display:none">
+                <input class="input" data-field="fontUrl" placeholder="字体文件直链：如 https://.../xxx.woff2" />
+                <input class="input field-fallback" data-field="fontFamily" placeholder="自定义 font-family 名称" />
+              </div>
+              <div class="field-hint">切换后可能需要几秒等字体下载，若预览没变化再点一次。</div>
+            </div>
+
+          </div>
+
+          <div class="repo-form-actions">
+            <button class="btn-ghost" data-action="reset">清空</button>
+            <button class="btn-ghost" data-action="save">保存到收藏</button>
+            <button class="btn-primary" data-action="export">导出图片</button>
+          </div>
+        </div>
+
+        <!-- 右：预览 -->
+        <aside class="repo-preview">
+          <div class="repo-preview-head">
+            <span class="repo-preview-eyebrow">Live Preview</span>
+            <span class="repo-preview-hint" data-role="autoSaveHint">草稿自动保存</span>
+          </div>
+          <div class="repo-preview-frame">
+            <canvas data-role="previewCanvas" width="540" height="720" aria-label="卡片预览"></canvas>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ═══════ 视图 · 画廊 ═══════ -->
+    <section class="repo-view" data-view-panel="gallery">
+      <div class="repo-gallery-note glass">
+        <span class="repo-gallery-note-icon">♪</span>
+        <p data-role="galleryRiskNote"></p>
+        <button class="btn-subtle" data-action="clearAll">清空全部收藏</button>
+      </div>
+
+      <div class="repo-gallery-grid" data-role="galleryGrid">
+        <!-- 卡片项动态渲染 -->
+      </div>
+      <div class="repo-gallery-empty" data-role="galleryEmpty" hidden>
+        <p>还没有收藏。做完一张卡后点「保存到收藏」，它会出现在这里。</p>
+      </div>
+    </section>
+
+  </main>
+
+  <div data-include="../../assets/partials/footer.html" data-base="../../"></div>
+
+  <!-- 导出后弹窗：询问是否清空当前草稿 -->
+  <div class="repo-modal" data-role="afterExportModal" hidden>
+    <div class="repo-modal-mask" data-role="afterExportClose"></div>
+    <div class="repo-modal-body glass">
+      <h3 class="repo-modal-title">导出完成</h3>
+      <p class="repo-modal-desc">卡片已下载。要不要清空当前编辑区的数据？</p>
+      <div class="repo-modal-actions">
+        <button class="btn-ghost" data-action="keep">保留</button>
+        <button class="btn-primary" data-action="clear">清空</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="repo-toast" data-role="toast" hidden></div>
+
+  <script type="module" src="../../assets/include.js"></script>
+  <script type="module" src="./create.js"></script>
+</body>
+</html>

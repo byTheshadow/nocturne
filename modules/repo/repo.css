@@ -1,0 +1,598 @@
+/* ==============================================================
+   Nocturne — Repo 卡模块样式
+   前缀：.repo-  |  局部通用：.chip / .passage- / .mosaic- / .upload-slot 等
+   ============================================================== */
+
+/* ============ 头部 ============ */
+
+.repo-head {
+  text-align: center;
+  padding: 32px 0 20px;
+}
+.repo-head-desc {
+  color: var(--text-dim);
+  margin: 16px auto 0;
+  max-width: 560px;
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* ============ 视图切换 tabs ============ */
+
+.repo-tabs {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin: 12px auto 32px;
+  padding: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-elevated) 40%, transparent);
+  border: 1px solid var(--border-faint);
+  width: max-content;
+  max-width: 100%;
+}
+.repo-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  font-size: 13px;
+  letter-spacing: .2em;
+  cursor: pointer;
+  transition: all .25s ease;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.repo-tab:hover { color: var(--accent); }
+.repo-tab.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.repo-tab-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  letter-spacing: 0;
+}
+.repo-tab.is-active .repo-tab-count {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ============ 视图容器 ============ */
+
+.repo-view { display: none; }
+.repo-view.is-active { display: block; }
+
+/* ============ 编辑布局 ============ */
+
+.repo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.repo-form {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 200px);
+}
+.repo-form-scroll {
+  padding: 28px 30px 12px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+.repo-form-actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 30px;
+  border-top: 1px solid var(--border-faint);
+  background: color-mix(in srgb, var(--bg-elevated) 30%, transparent);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.repo-preview {
+  position: sticky;
+  top: 88px;
+  padding: 24px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--bg-elevated) 40%, transparent);
+  border: 1px solid var(--border-faint);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+}
+.repo-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+}
+.repo-preview-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: .35em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.repo-preview-hint {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-style: italic;
+}
+.repo-preview-frame {
+  width: 100%;
+  aspect-ratio: 540 / 720;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border-faint);
+  box-shadow: var(--shadow-inset);
+}
+.repo-preview-frame canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ============ 表单：栅格 & 补充 ============ */
+
+.field-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ============ Chip 组 ============ */
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.chip-group-inline { gap: 6px; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Cormorant Garamond', 'Noto Serif SC', serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all .18s ease;
+  letter-spacing: .02em;
+}
+.chip:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.chip.is-active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.chip-remove {
+  color: var(--text-faint);
+  font-size: 12px;
+  line-height: 1;
+  margin-left: 2px;
+  cursor: pointer;
+}
+.chip-remove:hover { color: var(--danger); }
+
+/* 自填 chip 追加输入 */
+.chip-add-row { margin-top: 10px; }
+.chip-add-input { font-size: 14px; padding: 8px 14px; }
+
+/* ============ Canvas 主题 chip（带色板）============ */
+
+.chip.chip-theme {
+  padding: 6px 12px 6px 6px;
+}
+.chip-theme-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  flex: none;
+}
+
+/* ============ 美味文段：预览 & 工具条 ============ */
+
+.passage-preview {
+  min-height: 80px;
+  padding: 16px 18px;
+  margin-top: 12px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: color-mix(in srgb, var(--bg-elevated) 40%, transparent);
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: text;
+}
+.passage-preview:empty::before {
+  content: "上面粘贴文本后，这里会出现可标记的预览";
+  color: var(--text-faint);
+  font-style: italic;
+}
+.passage-preview .seg {
+  border-bottom: 2px solid transparent;
+  transition: background .15s;
+}
+.passage-preview .seg.is-highlight { padding: 2px 0; border-radius: 2px; }
+.passage-preview .seg.is-underline { padding-bottom: 1px; }
+
+.passage-preview .seg.is-mosaic-solid {
+  background: var(--text-dim);
+  color: transparent;
+  border-radius: 3px;
+  padding: 0 4px;
+}
+.passage-preview .seg.is-mosaic-block {
+  background: repeating-linear-gradient(45deg,
+    var(--text-dim) 0, var(--text-dim) 3px,
+    var(--bg-elevated) 3px, var(--bg-elevated) 6px);
+  color: transparent;
+  border-radius: 3px;
+  padding: 0 4px;
+}
+.passage-preview .seg.is-mosaic-emoji {
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .05em;
+}
+
+.passage-toolbar {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-elevated) 70%, transparent);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.passage-toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.passage-toolbar-label {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: .28em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  min-width: 60px;
+}
+.passage-toolbar .btn-subtle { align-self: flex-start; }
+
+.color-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color .15s, transform .15s;
+  position: relative;
+}
+.color-swatch:hover { transform: scale(1.1); }
+.color-swatch.is-active { border-color: var(--text); }
+
+/* ============ 马赛克设置 ============ */
+
+.mosaic-config {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-faint);
+  background: color-mix(in srgb, var(--bg-elevated) 30%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mosaic-config-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mosaic-label { margin: 0; }
+
+.mosaic-word-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 4px;
+}
+.mosaic-word-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px 5px 12px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .05em;
+}
+.mosaic-word-chip .remove {
+  cursor: pointer;
+  color: var(--accent);
+  opacity: .6;
+  font-size: 14px;
+}
+.mosaic-word-chip .remove:hover { opacity: 1; color: var(--danger); }
+
+/* ============ 上传区块 ============ */
+
+.upload-slot {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: color-mix(in srgb, var(--bg-elevated) 30%, transparent);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color .2s;
+  position: relative;
+}
+.upload-slot:hover { border-color: var(--accent); }
+.upload-slot-wide { width: 100%; height: 160px; }
+
+.upload-slot-preview {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px;
+  background-size: cover;
+  background-position: center;
+}
+.upload-slot-hint {
+  font-style: italic;
+  letter-spacing: .05em;
+}
+.upload-slot.has-image .upload-slot-hint { display: none; }
+
+/* ============ 滑块 ============ */
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.slider-row input[type="range"] { flex: 1; accent-color: var(--accent); }
+.slider-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  min-width: 44px;
+  text-align: right;
+}
+
+/* ============ 显隐控制 ============ */
+
+[data-show-when] { display: none; }
+[data-show-when].is-visible { display: block; }
+
+/* ============ 画廊 ============ */
+
+.repo-gallery-note {
+  padding: 18px 22px;
+  border-radius: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.repo-gallery-note-icon {
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1;
+}
+.repo-gallery-note p { flex: 1; margin: 0; line-height: 1.55; }
+
+.repo-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+.repo-card {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-elevated) 40%, transparent);
+  cursor: pointer;
+  transition: transform .25s, border-color .25s, box-shadow .25s;
+  display: flex;
+  flex-direction: column;
+}
+.repo-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 30px -12px var(--accent-glow);
+}
+.repo-card-thumb {
+  aspect-ratio: 3 / 4;
+  background: var(--bg);
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid var(--border-faint);
+  position: relative;
+}
+.repo-card-thumb-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-family: 'Cinzel', serif;
+  font-size: 32px;
+  letter-spacing: .3em;
+}
+.repo-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.repo-card-title {
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  font-size: 16px;
+  color: var(--text);
+  letter-spacing: .06em;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.repo-card-meta {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-style: italic;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .04em;
+}
+.repo-card-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 10px 12px;
+  justify-content: flex-end;
+}
+
+.repo-gallery-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* ============ 弹窗 ============ */
+
+.repo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.repo-modal-mask {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+.repo-modal-body {
+  position: relative;
+  padding: 32px 36px;
+  border-radius: 16px;
+  max-width: 90vw;
+  width: 400px;
+  text-align: center;
+}
+.repo-modal-title {
+  font-family: 'Cinzel', 'Noto Serif SC', serif;
+  font-size: 22px;
+  letter-spacing: .2em;
+  margin: 0 0 12px;
+  color: var(--text);
+}
+.repo-modal-desc {
+  color: var(--text-dim);
+  margin: 0 0 24px;
+  font-size: 15px;
+}
+.repo-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ============ Toast ============ */
+
+.repo-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-elevated) 95%, transparent);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  font-size: 14px;
+  letter-spacing: .05em;
+  box-shadow: 0 8px 24px -6px var(--accent-glow);
+  backdrop-filter: blur(12px);
+  animation: repoToastIn .3s ease;
+}
+.repo-toast.is-err { border-color: var(--danger); color: var(--danger); }
+@keyframes repoToastIn {
+  from { opacity: 0; transform: translate(-50%, -12px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ============ 响应式 ============ */
+
+@media (max-width: 960px) {
+  .repo-layout {
+    grid-template-columns: 1fr;
+  }
+  .repo-form { max-height: none; }
+  .repo-form-scroll { max-height: none; overflow: visible; }
+  .repo-preview {
+    position: static;
+    order: -1;
+  }
+  .repo-preview-frame { max-width: 420px; margin: 0 auto; }
+}
+
+@media (max-width: 640px) {
+  .repo-head { padding: 16px 0 8px; }
+  .repo-tabs { margin: 8px auto 20px; }
+  .repo-tab { padding: 8px 16px; font-size: 12px; letter-spacing: .16em; }
+  .repo-form-scroll { padding: 22px 20px 12px; }
+  .repo-form-actions { padding: 14px 20px; }
+  .field-grid-2 { grid-template-columns: 1fr; gap: 0; }
+  .repo-gallery-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .upload-slot { width: 100px; height: 100px; }
+  .repo-modal-body { padding: 24px 22px; }
+}
