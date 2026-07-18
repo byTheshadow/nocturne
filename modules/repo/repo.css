@@ -596,3 +596,10 @@
   .upload-slot { width: 100px; height: 100px; }
   .repo-modal-body { padding: 24px 22px; }
 }
+/* ============ hidden 属性兜底（覆盖 display: flex 等）============ */
+
+.repo-modal[hidden],
+.repo-toast[hidden],
+.slider-row[hidden] {
+  display: none !important;
+}
