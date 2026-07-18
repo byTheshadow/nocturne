@@ -5,7 +5,7 @@ import {
   THEME_TAGS, FEELING_TAGS, WORLD_TAGS,
   BUILTIN_FONTS, FONT_MODES,
   HIGHLIGHT_COLORS, UNDERLINE_COLORS,
-  MOSAIC_STYLES, MAX_MOSAIC_WORDS,
+  MOSAIC_STYLES, MOSAIC_GLYPH_PRESETS, MAX_MOSAIC_WORDS,
   CANVAS_THEMES, MAX_AVATAR_SIZE, MAX_BG_SIZE,
   GALLERY_RISK_NOTE,
 } from './templates.js';
@@ -44,6 +44,10 @@ function defaultConfig() {
       mosaicWords: [],      // string[] (≤5)
       mosaicStyle: 'solid', // solid | block | emoji
     },
+
+    // 马赛克符号（放 config 根部，chip 组直接读写更方便）
+    mosaicGlyphPreset: 'random',  // 预设 chip id；'' 表示走自填态
+    mosaicGlyph: '',              // 实际字符：空串=用 MOSAIC_GLYPHS 随机池
 
     avatar: '',             // dataURL
     backgroundImage: '',    // dataURL
@@ -133,6 +137,7 @@ function renderAllChips() {
   renderChipGroup('themeTags',   THEME_TAGS.map(t => ({ id: t, label: t })),   { mode: 'multi' });
 
   renderChipGroup('mosaicStyle', MOSAIC_STYLES, { mode: 'single' });
+  renderChipGroup('mosaicGlyphPreset', MOSAIC_GLYPH_PRESETS, { mode: 'single' });
 
   // Canvas 主题（带色板）
   renderChipGroup('canvasTheme', CANVAS_THEMES.map(t => ({
@@ -191,8 +196,16 @@ function syncChipsSelection() {
   $$('[data-show-when]').forEach(el => {
     const expr = el.dataset.showWhen;
     const [f, v] = expr.split('=');
-    el.classList.toggle('is-visible', String(state.config[f]) === v);
-    el.style.display = String(state.config[f]) === v ? '' : 'none';
+    // 支持 passage.mosaicStyle 这种嵌套字段
+    let cur;
+    if (f.includes('.')) {
+      const [a, b] = f.split('.');
+      cur = state.config[a]?.[b];
+    } else {
+      cur = state.config[f];
+    }
+    el.classList.toggle('is-visible', String(cur) === v);
+    el.style.display = String(cur) === v ? '' : 'none';
   });
 }
 
@@ -236,6 +249,8 @@ function bindEvents() {
 
   // 马赛克词
   $('[data-role="mosaicWordInput"]')?.addEventListener('keydown', onAddMosaicWord);
+  // 马赛克自填符号
+  $('[data-role="mosaicGlyphCustom"]')?.addEventListener('input', onCustomMosaicGlyph);
 
   // 头像 / 背景
   $('[data-role="avatarInput"]')?.addEventListener('change', (e) => onUploadImage(e, 'avatar', MAX_AVATAR_SIZE));
@@ -290,7 +305,23 @@ function selectChip(field, value) {
   }
   // 联动：worldTag 切走 custom 时清空 customWorld
   if (field === 'worldTag' && value !== 'custom') state.config.customWorld = '';
-  onStateChanged();
+
+  // 联动：mosaicStyle 存在 passage 子对象里，chip 组读的是根字段——同步一下
+  if (field === 'mosaicStyle') {
+    state.config.passage.mosaicStyle = state.config.mosaicStyle || 'solid';
+  }
+
+  // 联动：选预设符号 → 同步实际字符 + 清空自填框
+  if (field === 'mosaicGlyphPreset') {
+    const preset = MOSAIC_GLYPH_PRESETS.find(p => p.id === state.config.mosaicGlyphPreset);
+    state.config.mosaicGlyph = preset ? preset.char : '';
+    const custom = $('[data-role="mosaicGlyphCustom"]');
+    if (custom) custom.value = '';
+  }
+
+  onStateChanged({
+    rerenderPassage: field === 'mosaicStyle' || field === 'mosaicGlyphPreset',
+  });
 }
 
 function onInput(e) {
@@ -334,7 +365,7 @@ function onAddChip(e, field) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// 6. 马赛克词管理
+// 6. 马赛克词 & 符号
 // ══════════════════════════════════════════════════════════════
 
 function onAddMosaicWord(e) {
@@ -371,6 +402,22 @@ document.addEventListener('click', (e) => {
   onStateChanged({ rerenderPassage: true });
 });
 
+// 自填符号输入
+function onCustomMosaicGlyph(e) {
+  const v = e.target.value;
+  if (v && v.trim()) {
+    state.config.mosaicGlyph = v.trim();
+    // 自填态：取消所有预设 chip 选中
+    state.config.mosaicGlyphPreset = '';
+  } else {
+    // 输入清空 → 回退到当前预设（默认随机）
+    state.config.mosaicGlyphPreset = state.config.mosaicGlyphPreset || 'random';
+    const preset = MOSAIC_GLYPH_PRESETS.find(p => p.id === state.config.mosaicGlyphPreset);
+    state.config.mosaicGlyph = preset ? preset.char : '';
+  }
+  onStateChanged({ rerenderPassage: true });
+}
+
 // ══════════════════════════════════════════════════════════════
 // 7. 美味文段：选区 & 标记
 // ══════════════════════════════════════════════════════════════
@@ -379,7 +426,10 @@ function renderPassagePreview() {
   const preview = $('[data-role="passagePreview"]');
   if (!preview) return;
   const p = state.config.passage;
-  preview.innerHTML = renderPassageHtml(p.raw, p.marks, p.mosaicWords, p.mosaicStyle);
+  preview.innerHTML = renderPassageHtml(
+    p.raw, p.marks, p.mosaicWords, p.mosaicStyle,
+    state.config.mosaicGlyph
+  );
   renderSwatches();
 }
 
@@ -405,7 +455,6 @@ function onPassageSelection() {
     hideToolbar(); return;
   }
   const range = sel.getRangeAt(0);
-  // 判断选区在 preview 内
   if (!preview.contains(range.commonAncestorContainer)) { hideToolbar(); return; }
 
   const offset = computeOffsetInPreview(preview, range);
@@ -414,10 +463,6 @@ function onPassageSelection() {
   showToolbar();
 }
 
-/**
- * 计算选区在原始 raw 文本中的 start / end
- * 依赖每个 seg 上的 data-start 属性
- */
 function computeOffsetInPreview(preview, range) {
   const startInfo = resolveOffset(preview, range.startContainer, range.startOffset);
   const endInfo = resolveOffset(preview, range.endContainer, range.endOffset);
@@ -429,15 +474,12 @@ function computeOffsetInPreview(preview, range) {
 }
 
 function resolveOffset(preview, node, offset) {
-  // 找到最近的 .seg 祖先
   let el = node.nodeType === 3 ? node.parentNode : node;
   while (el && el !== preview && !el.classList?.contains('seg')) el = el.parentNode;
   if (!el || el === preview) return null;
   const segStart = Number(el.dataset.start || 0);
-  // 计算 el 内部文本 offset
   let textOffset = 0;
   if (node.nodeType === 3) {
-    // 计算 node 在 el 里之前的字符数
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     let n;
     while ((n = walker.nextNode())) {
@@ -463,14 +505,12 @@ function applyMark(type, color) {
 
   const { start, end } = state.toolbarSelection;
   const marks = state.config.passage.marks;
-  // 同类型覆盖：先删除范围内同类型的 marks，再加入新的
   state.config.passage.marks = marks
     .filter(m => !(m.type === type && overlaps(m, { start, end })))
     .concat([{ start, end, type, color }])
     .concat(marks.filter(m => m.type === type && overlaps(m, { start, end })
       && (m.start < start || m.end > end)).map(m => {
-        // 保留部分区间
-        return { ...m }; // 简化：直接允许多层，AI 时代懒得优化
+        return { ...m };
       }));
 
   hideToolbar();
@@ -481,7 +521,6 @@ function overlaps(a, b) { return !(a.end <= b.start || b.end <= a.start); }
 
 function onPassageClearMark() {
   if (!state.toolbarSelection) {
-    // 无选区：清空全部
     if (state.config.passage.marks.length === 0) return;
     if (!confirm('清空文段里所有的高亮和下划线？')) return;
     state.config.passage.marks = [];
@@ -555,6 +594,14 @@ function syncFormFromState({ rerenderPassage = true } = {}) {
 
   syncChipsSelection();
 
+  // 马赛克自填符号：只在自填态（preset='' 且 glyph 非空）反填输入框
+  const glyphCustom = $('[data-role="mosaicGlyphCustom"]');
+  if (glyphCustom) {
+    const shouldShowCustom = !state.config.mosaicGlyphPreset && !!state.config.mosaicGlyph;
+    const targetVal = shouldShowCustom ? state.config.mosaicGlyph : '';
+    if (glyphCustom.value !== targetVal) glyphCustom.value = targetVal;
+  }
+
   // 头像 / 背景预览
   const avatarBox = $('[data-role="avatarPreview"]');
   const avatarSlot = $('[data-role="avatarSlot"]');
@@ -609,7 +656,7 @@ function updateAutoSaveHint(txt) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// 10. 预览 Canvas（缩略版，直接调 engine 的 exportCanvas 拿 dataURL 再画到小 canvas）
+// 10. 预览 Canvas
 // ══════════════════════════════════════════════════════════════
 
 let __previewToken = 0;
@@ -619,14 +666,13 @@ async function renderPreviewCanvas() {
   const myToken = ++__previewToken;
   try {
     const dataUrl = await exportCanvas(state.config, { download: false });
-    if (myToken !== __previewToken) return; // 已被新的替代
+    if (myToken !== __previewToken) return;
     const img = new Image();
     img.onload = () => {
       if (myToken !== __previewToken) return;
       const ctx = canvas.getContext('2d');
       const w = canvas.width, h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-      // contain 缩放
       const ratio = Math.min(w / img.width, h / img.height);
       const dw = img.width * ratio, dh = img.height * ratio;
       ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
@@ -767,3 +813,4 @@ function escapeAttr(s) {
 
 // 暴露给 gallery.js 用
 export { state, showToast };
+

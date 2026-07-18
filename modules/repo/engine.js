@@ -213,7 +213,7 @@ function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 /**
  * 生成用于页面 preview 的 HTML 片段（安全，转义过）
  */
-export function renderPassageHtml(raw, marks, mosaicWords, mosaicStyle) {
+export function renderPassageHtml(raw, marks, mosaicWords, mosaicStyle, mosaicGlyph) {
   const segs = applyMosaic(segmentText(raw, marks), mosaicWords, mosaicStyle);
   return segs.map(seg => {
     const cls = ['seg'];
@@ -231,7 +231,12 @@ export function renderPassageHtml(raw, marks, mosaicWords, mosaicStyle) {
     const attrs = `class="${cls.join(' ')}" style="${styleParts.join(';')}" data-start="${seg.start}"`;
 
     if (seg.mosaic === 'emoji') {
-      const replaced = seg.text.replace(/\S/g, () => MOSAIC_GLYPHS[Math.floor(Math.random() * MOSAIC_GLYPHS.length)]);
+      const fixed = mosaicGlyph && String(mosaicGlyph).trim();
+      const replaced = seg.text.replace(/\S/g, () =>
+        fixed
+          ? fixed
+          : MOSAIC_GLYPHS[Math.floor(Math.random() * MOSAIC_GLYPHS.length)]
+      );
       return `<span ${attrs}>${escapeHtml(replaced)}</span>`;
     }
     return `<span ${attrs}>${escapeHtml(seg.text)}</span>`;
@@ -595,7 +600,7 @@ async function drawVinylCard(ctx, config, theme, fontFamily, layout, avatarImg) 
   // 美味文段
   if (config.passage && config.passage.raw && config.passage.raw.trim()) {
     y = drawSectionHead(ctx, 'HIGHLIGHT · 美味文段', theme, fontFamily, y);
-    y = drawPassage(ctx, config.passage, PADDING_X, y, CANVAS_WIDTH - PADDING_X * 2, theme, fontFamily);
+    y = drawPassage(ctx, config.passage, PADDING_X, y, CANVAS_WIDTH - PADDING_X * 2, theme, fontFamily, config.mosaicGlyph);
     y += 48;
   }
 
@@ -679,7 +684,7 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 // ─── 绘制：美味文段（带高亮 / 划线 / 马赛克）────────────────────
-function drawPassage(ctx, passage, x, y, maxWidth, theme, fontFamily) {
+function drawPassage(ctx, passage, x, y, maxWidth, theme, fontFamily, mosaicGlyph) {
   const font = `24px ${fontFamily}`;
   const lineHeight = 42;
   ctx.font = font;
@@ -744,7 +749,10 @@ function drawPassage(ctx, passage, x, y, maxWidth, theme, fontFamily) {
     for (const tok of ln) {
       const underline = (tok.styles || []).find(s => s.type === 'underline');
       if (tok.mosaic === 'emoji') {
-        const glyph = MOSAIC_GLYPHS[Math.floor(Math.random() * MOSAIC_GLYPHS.length)];
+        const fixed = mosaicGlyph && String(mosaicGlyph).trim();
+        const glyph = fixed
+          ? fixed
+          : MOSAIC_GLYPHS[Math.floor(Math.random() * MOSAIC_GLYPHS.length)];
         ctx.fillStyle = theme.textDim;
         ctx.font = font;
         ctx.fillText(glyph, cx, cy);
@@ -860,3 +868,4 @@ function formatDate(iso) {
   if (isNaN(d)) return String(iso);
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 }
+

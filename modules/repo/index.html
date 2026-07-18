@@ -118,21 +118,31 @@
                 <button class="btn-subtle" data-role="passageClear">清除标记</button>
               </div>
 
-              <!-- 马赛克设置 -->
+                           <!-- 马赛克设置 -->
               <div class="mosaic-config">
                 <div class="mosaic-config-row">
                   <label class="field-label mosaic-label">马赛克词（最多 5 个）</label>
                   <div class="mosaic-word-list" data-role="mosaicWordList"></div>
                   <div class="mosaic-word-add">
-                    <input class="input" data-role="mosaicWordInput" placeholder="输入要打码的词，回车添加" />
+                    <input class="input" data-role="mosaicWordInput" placeholder="输入要打码的词,回车添加" />
                   </div>
                 </div>
                 <div class="mosaic-config-row">
                   <label class="field-label mosaic-label">马赛克样式</label>
                   <div class="chip-group chip-group-inline" data-chips="mosaicStyle"></div>
                 </div>
+
+                <!-- 符号替换：仅 mosaicStyle=emoji 时显示 -->
+                <div class="mosaic-config-row" data-show-when="mosaicStyle=emoji" style="display:none">
+                  <label class="field-label mosaic-label">替换符号</label>
+                  <div class="chip-group chip-group-inline" data-chips="mosaicGlyphPreset"></div>
+                  <input class="input chip-add-input" data-role="mosaicGlyphCustom"
+                         placeholder="或者自填一个字符,如 ✦ / X / ？"
+                         maxlength="4" />
+                  <div class="field-hint">选「随机」时会从符号池随机取；点其他 chip 或自填则全部用同一个符号。</div>
+                </div>
               </div>
-            </div>
+
 
             <!-- 头图 -->
             <div class="field">

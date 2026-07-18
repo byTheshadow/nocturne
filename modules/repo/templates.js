@@ -74,11 +74,26 @@ export const MOSAIC_STYLES = [
   { id: 'emoji', label: '符号替换',  desc: '换成一串符号' },
 ];
 
-// 供 emoji 模式随机选取，也可以让用户在设置里定制
+// 随机符号池（用户没选固定符号时使用）
 export const MOSAIC_GLYPHS = ['█', '▓', '░', '※', '◈', '❋', '⚹', '❄', '✦', '◆'];
 
-// ── Canvas 配色（affinity 7 套 + 新增 3 套 · 共 10 套）─────────
+// 供用户选择的固定符号预设（点选 chip；也可以自填）
+export const MOSAIC_GLYPH_PRESETS = [
+  { id: 'random',  label: '随机', char: '' },        // 空串=用 MOSAIC_GLYPHS 随机
+  { id: 'block',   label: '█',   char: '█' },
+  { id: 'shade',   label: '▓',   char: '▓' },
+  { id: 'star',    label: '★',   char: '★' },
+  { id: 'heart',   label: '♥',   char: '♥' },
+  { id: 'note',    label: '♪',   char: '♪' },
+  { id: 'circle',  label: '●',   char: '●' },
+  { id: 'flower',  label: '❋',   char: '❋' },
+  { id: 'diamond', label: '◆',   char: '◆' },
+  { id: 'quest',   label: '？',   char: '？' },
+];
+
+// ── Canvas 配色（哥特 7 套 + 深色 3 套 + 清新 4 套 · 共 14 套）──
 export const CANVAS_THEMES = [
+  // ── 哥特 / 深色系 ──
   { id: 'wine',      label: '酒红夜曲', bg: '#0a0a0d', bgAlt: '#1a0e12', accent: '#b02838', accentSoft: 'rgba(176,40,56,0.15)',  text: '#eae6de', textDim: '#a89a92', divider: '#3a2028' },
   { id: 'ink',       label: '墨蓝月色', bg: '#08101a', bgAlt: '#122030', accent: '#4a7fb8', accentSoft: 'rgba(74,127,184,0.15)', text: '#e0e6ee', textDim: '#8a9bae', divider: '#243244' },
   { id: 'moss',      label: '苔绿旧梦', bg: '#0e130f', bgAlt: '#1a221c', accent: '#7a9c6a', accentSoft: 'rgba(122,156,106,0.15)',text: '#e4e6de', textDim: '#9aa892', divider: '#2a3428' },
@@ -89,6 +104,12 @@ export const CANVAS_THEMES = [
   { id: 'vinyl',     label: '黑胶夜',   bg: '#000000', bgAlt: '#0a0a0a', accent: '#c9a961', accentSoft: 'rgba(201,169,97,0.15)', text: '#e8e6e0', textDim: '#8a8880', divider: '#2a2620' },
   { id: 'cassette',  label: '磁带午夜', bg: '#0a1424', bgAlt: '#101c34', accent: '#ff7a3a', accentSoft: 'rgba(255,122,58,0.15)', text: '#e4e6ee', textDim: '#8090ae', divider: '#1e2a44' },
   { id: 'ricewhite', label: '米白唱片', bg: '#f0e8d8', bgAlt: '#e0d4b8', accent: '#8a5a30', accentSoft: 'rgba(138,90,48,0.15)',  text: '#2a2018', textDim: '#7a6448', divider: '#c0b090' },
+
+  // ── 清新 / 浅色系（v0.7.1 新增）──
+  { id: 'mint',      label: '薄荷奶油', bg: '#eef5ee', bgAlt: '#dee8de', accent: '#5a9a7a', accentSoft: 'rgba(90,154,122,0.18)', text: '#1f2a24', textDim: '#5a7a68', divider: '#c0d4c4' },
+  { id: 'sakura',    label: '樱花薄暮', bg: '#faf0f0', bgAlt: '#f0dede', accent: '#c47a8a', accentSoft: 'rgba(196,122,138,0.18)',text: '#2a1f22', textDim: '#7a5a62', divider: '#e0c4c8' },
+  { id: 'sky',       label: '天青海雾', bg: '#eef2f7', bgAlt: '#dce4ee', accent: '#5a80a8', accentSoft: 'rgba(90,128,168,0.18)', text: '#1a2028', textDim: '#5a7088', divider: '#c0ccd8' },
+  { id: 'lemon',     label: '柠檬奶油', bg: '#f7f3e6', bgAlt: '#ede4cc', accent: '#a8894a', accentSoft: 'rgba(168,137,74,0.18)', text: '#2a2418', textDim: '#786848', divider: '#d8cba8' },
 ];
 
 export function findCanvasTheme(id) {
