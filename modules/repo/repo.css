@@ -102,30 +102,28 @@
   flex-wrap: wrap;
   justify-content: flex-end;
 }
-
 .repo-preview {
   position: sticky;
   top: 88px;
-  padding: 22px;
-  border-radius: 20px;
-  background:
-    linear-gradient(180deg,
-      color-mix(in srgb, var(--bg-elevated) 92%, transparent) 0%,
-      color-mix(in srgb, var(--bg-elevated) 78%, transparent) 100%);
+  align-self: start;      /* grid cell 内顶部对齐，不被拉伸 */
+  min-width: 0;           /* 防止内容撑破 grid 列 */
+  z-index: 0;             /* 稳定 stacking context，避免浮到表单上层 */
+  padding: 18px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
   border: 1px solid var(--border);
-  backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.05);
   box-shadow:
-    0 30px 80px -30px rgba(0, 0, 0, 0.55),
-    0 8px 24px -12px var(--accent-glow, transparent),
+    0 12px 32px -18px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 color-mix(in srgb, var(--text) 6%, transparent);
 }
 .repo-preview-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding-bottom: 14px;
-  margin-bottom: 16px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
   border-bottom: 1px solid var(--border-faint);
 }
 .repo-preview-eyebrow {
@@ -143,25 +141,25 @@
 .repo-preview-frame {
   width: 100%;
   aspect-ratio: 540 / 720;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
-  /* 中性底：跟主题 --bg 拉开距离，避免 canvas 边缘融进面板 */
+  padding: 8px;
+  /* 中性斜纹底：跟主题 --bg 明确拉开距离，避免 wine canvas 边缘融进面板 */
   background:
     repeating-linear-gradient(45deg,
-      color-mix(in srgb, var(--text) 4%, transparent) 0 8px,
+      color-mix(in srgb, var(--text) 5%, transparent) 0 8px,
       color-mix(in srgb, var(--text) 2%, transparent) 8px 16px);
-  border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
-  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--bg) 60%, transparent),
-    inset 0 12px 24px -12px rgba(0, 0, 0, 0.55);
+    inset 0 0 0 1px color-mix(in srgb, var(--bg) 50%, transparent),
+    inset 0 8px 20px -12px rgba(0, 0, 0, 0.5);
 }
 .repo-preview-frame canvas {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 6px;
-  box-shadow: 0 8px 24px -10px rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  box-shadow: 0 6px 20px -10px rgba(0, 0, 0, 0.4);
 }
 
 /* ============ 表单：栅格 & 补充 ============ */
